@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Product } from '../../product/product.entity';
 import { Order } from '../../order/order.entity';
 import { Review } from '../../review/review.entity';
+import { Role } from '../../role/role.entity';
 
 @Entity('users')
 export class User {
@@ -20,8 +21,8 @@ export class User {
   @Column()
   address: string;
 
-  @Column({ type: 'enum', enum: ['buyer', 'seller', 'admin'] })
-  role: string;
+  @ManyToOne(() => Role, (role) => role.users)
+  role: Role;
 
   @OneToMany(() => Product, (product) => product.seller, { cascade: true })
   products: Product[];

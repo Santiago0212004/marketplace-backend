@@ -21,7 +21,7 @@ export class RegisterUserDto {
 
   @IsString()
   @Matches(/(buyer|seller)/, { message: 'Role must be either "buyer" or "seller"' })
-  role: 'buyer' | 'seller';
+  roleName: 'buyer' | 'seller';
 }
 
 export class LoginUserDto {
