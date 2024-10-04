@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Size } from '../size/size.entity';
+import { Unit } from 'src/unit/unit.entity';
 
 @Entity('options')
 export class Option {
@@ -14,4 +15,7 @@ export class Option {
 
   @ManyToOne(() => Size, (size) => size.options)
   size: Size;
+
+  @OneToMany(() => Unit, (unit) => unit.option)
+  units: Unit[];
 }
