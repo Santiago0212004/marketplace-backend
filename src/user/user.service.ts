@@ -26,7 +26,7 @@ export class UserService {
     const role = await this.roleRepository.findOne({ where: { name: roleName } });
 
     if (!role) {
-      throw new NotFoundException(`Role ${roleName} not found`);
+      throw new NotFoundException(`Role named ${roleName} not found`);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -43,11 +43,11 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({ where: { email }, relations: ['role'] });
   }
 
   async findById(id: string): Promise<User | undefined> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] } );
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }

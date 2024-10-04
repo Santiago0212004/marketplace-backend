@@ -5,9 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
-import { ProductController } from './product/product.controller';
-import { ProductService } from './product/product.service';
 import { ProductModule } from './product/product.module';
+import { SubcategoryModule } from './subcategory/subcategory.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -29,8 +29,10 @@ import { ProductModule } from './product/product.module';
     UserModule,
     RoleModule,
     ProductModule,
+    SubcategoryModule,
+    CategoryModule,
   ],
-  controllers: [ProductController],
-  providers: [ProductService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
