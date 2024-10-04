@@ -1,4 +1,4 @@
-import { Option } from "src/option/option.entity";
+import { Option } from "../../option/entity/option.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("units")

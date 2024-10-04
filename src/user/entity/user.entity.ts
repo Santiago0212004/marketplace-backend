@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
-import { Product } from '../../product/product.entity';
-import { Order } from '../../order/order.entity';
-import { Review } from '../../review/review.entity';
-import { Role } from '../../role/role.entity';
+import { Product } from '../../product/entity/product.entity';
+import { Order } from '../../order/entity/order.entity';
+import { Review } from '../../review/entity/review.entity';
+import { Role } from '../../role/entity/role.entity';
 
 @Entity('users')
 export class User {
