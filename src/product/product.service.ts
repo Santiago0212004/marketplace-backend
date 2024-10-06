@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { Subcategory } from '../subcategory/entity/subcategory.entity';
-import { User } from 'src/user/entity/user.entity';
-import { CurrentUserService } from 'src/common/currentUser.service';
+import { User } from '../user/entity/user.entity';
+import { CurrentUserService } from '../common/currentUser.service';
 
 
 @Injectable()

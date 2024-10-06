@@ -11,7 +11,6 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 export class RoleController {
     constructor(private readonly roleService: RoleService) {}
 
-
     @Roles('admin', 'seller', 'buyer')
     @Get()
     async getAll(): Promise<Role[]> {
