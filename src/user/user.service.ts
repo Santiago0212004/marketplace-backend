@@ -59,13 +59,22 @@ export class UserService {
   }
 
   async updateUser(id: string, updateData: Partial<User>): Promise<User> {
-    const user = await this.findById(id);
+    const user = await this.userRepository.findOne({where: {id}});
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
     await this.userRepository.update(user.id, updateData);
-    return this.userRepository.findOne({ where: { id: user.id } });
+
+    return await this.userRepository.findOne({ where: { id: user.id } });
   }
 
+
   async deleteUser(id: string): Promise<void> {
-    const user = await this.findById(id);
+    const user = await this.userRepository.findOne({where: {id}});
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
     await this.userRepository.delete(user.id);
   }
 }
