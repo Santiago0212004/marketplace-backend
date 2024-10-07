@@ -3,8 +3,8 @@ import { SubcategoryService } from './subcategory.service';
 import { CreateSubcategoryDto } from './dto/createSubcategory.dto';
 import { Subcategory } from './entity/subcategory.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('subcategories')
 @UseGuards(JwtAuthGuard, RolesGuard)
