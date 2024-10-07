@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Size } from './entity/size.entity';
 import { CreateSizeDto } from './dto/createSize.dto';
-import { Product } from '../Product/entity/product.entity';
+import { Product } from '../product/entity/product.entity';
 
 
 
