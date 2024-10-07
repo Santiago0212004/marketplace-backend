@@ -5,18 +5,18 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "public"
+        "distDir": "dist"
       }
     },
     {
-      "src": "vercel-func.ts",
+      "src": "src/vercel-func.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "vercel-func.ts"
+      "dest": "src/vercel-func.ts"
     }
   ]
 }
