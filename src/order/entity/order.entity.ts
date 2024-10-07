@@ -8,7 +8,7 @@ export class Order {
   id: string;
 
   @Column()
-  quantity: number;
+  createdDate: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
   buyer: User;

@@ -24,7 +24,7 @@ export class UnitController {
     }
 
     @Roles('admin', 'seller', 'buyer')
-    @Get(':id')
+    @Get('option/:id')
     async getUnitByOptionId(@Param('id') optionId: string): Promise<Unit[]> {
         return this.unitService.getUnitByOptionId(optionId);
     }

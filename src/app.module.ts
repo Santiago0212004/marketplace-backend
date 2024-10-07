@@ -10,6 +10,8 @@ import { SubcategoryModule } from './subcategory/subcategory.module';
 import { CategoryModule } from './category/category.module';
 import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
+import { UnitModule } from './unit/unit.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { OptionModule } from './option/option.module';
     AuthModule,
     UserModule,
     RoleModule,
+    UnitModule,
+    OrderModule,
     OptionModule,
     SizeModule,
     ProductModule,

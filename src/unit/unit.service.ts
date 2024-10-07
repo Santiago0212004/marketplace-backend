@@ -45,7 +45,7 @@ export class UnitService {
 
     async getAll(): Promise<Unit[]> {
         try {
-            return await this.unitRepository.find({ relations: ['unit'] });
+            return await this.unitRepository.find({ relations: ['option'] });
         } catch {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving untis');
         }
