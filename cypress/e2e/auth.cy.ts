@@ -2,8 +2,7 @@ describe('Auth API E2E Tests', () => {
   const apiUrl = 'http://localhost:3000';
   let accessToken = '';
   let userId = '';
-  let adminToken = '';
-  const adminCredentials = { email: 'admin@example.com', password: 'Password123!' };
+  let token = '';
 
   it('should register a new user successfully', () => {
     cy.request('POST', `${apiUrl}/auth/register`, {
@@ -56,22 +55,22 @@ describe('Auth API E2E Tests', () => {
 
   it('admin user should successfully login', () => {
     cy.request('POST', `${apiUrl}/auth/login`, {
-      email: adminCredentials.email,
-      password: adminCredentials.password,
+      email: 'admin@example.com',
+      password: 'Password123!',
     }).then((response) => {
       expect(response.status).to.eq(201);
       expect(response.body).to.have.property('access_token');
-      adminToken = response.body.access_token;
+      token = response.body.access_token;
     });
   });
 
   after (() => {
-    if (userId && adminToken) {
+    if (userId && token) {
       cy.request({
         method: 'DELETE',
         url: `${apiUrl}/users/${userId}`,
         headers: {
-          Authorization: `Bearer ${adminToken}`,
+          Authorization: `Bearer ${token}`,
         },
       }).then((deleteResponse) => {
         expect(deleteResponse.status).to.eq(200);

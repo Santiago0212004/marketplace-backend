@@ -4,11 +4,13 @@ describe('User API E2E Tests', () => {
   let userId = '';
   let nonexistentUserId = '123e4567-e89b-12d3-a456-426614174000';
   let falseAccessToken = '321e4567-e8b9-1d23-a456-421664170040';
-  const adminCredentials = { email: 'admin@example.com', password: 'Password123!' };
   const userCredentials = { email: 'newtester10@example.com', password: 'Password123!' };
 
   before(() => {
-    cy.request('POST', `${apiUrl}/auth/login`, adminCredentials)
+    cy.request('POST', `${apiUrl}/auth/login`, {
+      email: 'admin@example.com',
+      password: 'Password123!'
+    })
       .then((response) => {
         accessToken = response.body.access_token;
       });
