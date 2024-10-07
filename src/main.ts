@@ -7,10 +7,9 @@ import * as express from 'express';
 let cachedServer: (arg0: any, arg1: any) => any;
 
 async function bootstrap() {
-  const expressApp = express();  // Crear la instancia de Express
+  const expressApp = express();
   const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
 
-  // Aplicar los pipes de validación globales
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -18,13 +17,13 @@ async function bootstrap() {
     }),
   );
 
-  await app.init(); // Inicializar la aplicación Nest sin escuchar en el puerto
-  return expressApp; // Retornar la instancia de Express
+  await app.init();
+  return expressApp;
 }
 
 export default async function handler(req, res) {
   if (!cachedServer) {
-    cachedServer = await bootstrap();  // Inicializar el servidor solo si no existe
+    cachedServer = await bootstrap();
   }
-  return cachedServer(req, res);  // Reutilizar el servidor para manejar la solicitud
+  return cachedServer(req, res);
 }
