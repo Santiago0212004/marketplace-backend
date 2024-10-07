@@ -74,7 +74,7 @@ describe('Category API E2E Tests', () => {
 
   it('should update a category successfully', () => {
     cy.request({
-      method: 'PATCH',
+      method: 'PUT',
       url: `${apiUrl}/categories/${categoryId}`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -90,7 +90,7 @@ describe('Category API E2E Tests', () => {
 
   it('should not update a category that does not exists', () => {
     cy.request({
-      method: 'PATCH',
+      method: 'PUT',
       url: `${apiUrl}/categories/${nonexistentCategoryId}`,
       failOnStatusCode: false,
       headers: {

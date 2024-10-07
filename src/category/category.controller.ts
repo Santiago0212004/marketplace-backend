@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Patch, Delete, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Get, Patch, Delete, Param, UseGuards, Put } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/createCategory.dto';
 import { Category } from './entity/category.entity';
@@ -24,7 +24,7 @@ export class CategoryController {
   }
 
   @Roles('admin')
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() createCategoryDto: CreateCategoryDto,
