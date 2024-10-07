@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Product } from '../../product/entity/product.entity';
 import { Order } from '../../order/entity/order.entity';
-import { Review } from '../../review/entity/review.entity';
+import { ReviewSeller } from '../../review/entity/reviewSeller.entity';
 import { Role } from '../../role/entity/role.entity';
 
 @Entity('users')
@@ -30,6 +30,6 @@ export class User {
   @OneToMany(() => Order, (order) => order.buyer, { cascade: true })
   orders: Order[];
 
-  @OneToMany(() => Review, (review) => review.buyer, { cascade: true })
-  reviews: Review[];
+  @OneToMany(() => ReviewSeller, (reviewSeller) => reviewSeller.buyer, { cascade: true })
+  reviews: ReviewSeller[];
 }

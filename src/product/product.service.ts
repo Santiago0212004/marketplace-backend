@@ -10,6 +10,8 @@ import { CurrentUserService } from 'src/common/currentUser.service';
 
 @Injectable()
 export class ProductService {
+  
+  
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
@@ -63,13 +65,44 @@ export class ProductService {
     }
   }
 
+  async remove(id: string) {
+    const product = await this.productRepository.findOne({
+      where: { id }
+    })
+
+    if(!product){
+      throw new NotFoundException(`No product found with this id:${id}`)
+    }
+    
+    this.productRepository.remove(product)
+  }
+  async update(updateProduct: CreateProductDto, id: string):Promise<Product> {
+    
+    const newProduct = await this.productRepository.preload({
+      id:id, ...updateProduct
+    })
+
+    if(!newProduct){
+      throw new NotFoundException('The product could not be updated')
+    }
+    await this.productRepository.save(newProduct)
+    return newProduct
+  }
+
   async getAll(): Promise<Product[]> {
     try {
       return await this.productRepository.find({
-        relations: ['seller', 'subcategory'] // Opcional: cargar relaciones si las necesitas
+        where:{
+          seller:{id:this.currentUserService.getCurrentUserId()}
+        },
+        relations: ['seller', 'subcategory']// Opcional: cargar relaciones si las necesitas
       });
     } catch {
       throw new InternalServerErrorException('An unexpected error occurred while retrieving products');
     }
+  }
+
+  findOne(id: string) {
+    return this.productRepository.findOne({where: { id }})
   }
 }

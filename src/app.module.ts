@@ -8,6 +8,8 @@ import { RoleModule } from './role/role.module';
 import { ProductModule } from './product/product.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { CategoryModule } from './category/category.module';
+import { ReviewController } from './review/review.controller';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -31,8 +33,9 @@ import { CategoryModule } from './category/category.module';
     ProductModule,
     SubcategoryModule,
     CategoryModule,
+    ReviewModule
   ],
-  controllers: [],
+  controllers: [ReviewController],
   providers: [],
 })
 export class AppModule {}
