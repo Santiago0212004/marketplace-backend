@@ -12,6 +12,7 @@ import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
 import { UnitModule } from './unit/unit.module';
 import { OrderModule } from './order/order.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { OrderModule } from './order/order.module';
     ProductModule,
     SubcategoryModule,
     CategoryModule,
+    ReviewModule
   ],
   controllers: [],
   providers: [],
