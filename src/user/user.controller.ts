@@ -18,7 +18,14 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'seller', 'buyer')
-  @Patch(':id')
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    return this.userService.findByEmail(email);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'seller', 'buyer')
+  @Get('id/:id')
   async updateUser(@Param('id') id: string, @Body() updateData: Partial<User>) {
     return this.userService.updateUser(id, updateData);
   }

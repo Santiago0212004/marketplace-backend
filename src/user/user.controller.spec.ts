@@ -18,6 +18,7 @@ describe('UserController', () => {
           provide: UserService,
           useValue: {
             findById: jest.fn(),
+            findByEmail: jest.fn(),
             updateUser: jest.fn(),
             deleteUser: jest.fn(),
             findAll: jest.fn(),
@@ -56,6 +57,14 @@ describe('UserController', () => {
       jest.spyOn(userService, 'findById').mockResolvedValue(mockUser);
 
       expect(await userController.getUserById('57c68de4-dad0-4b03-9b2c-5b491c3645bb')).toBe(mockUser);
+    });
+  });
+
+  describe('getUserByEmail', () => {
+    it('should return a user by email', async () => {
+      jest.spyOn(userService, 'findByEmail').mockResolvedValue(mockUser);
+
+      expect(await userController.getUserByEmail('test@example.com')).toBe(mockUser);
     });
   });
 
