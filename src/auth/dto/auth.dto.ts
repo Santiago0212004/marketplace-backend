@@ -20,8 +20,8 @@ export class RegisterUserDto {
     address: string;
 
     @IsString()
-    @Matches(/(buyer|seller)/, { message: 'Role must be either "buyer" or "seller"' })
-    roleName: 'buyer' | 'seller';
+    @Matches(/(admin|buyer|seller)/, { message: 'Role must be either "buyer" or "seller"' })
+    roleName: 'admin' | 'buyer' | 'seller';
   }
 
   export class LoginUserDto {

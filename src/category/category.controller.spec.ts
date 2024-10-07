@@ -11,6 +11,8 @@ describe('CategoryController', () => {
   const mockCategoryService = {
     create: jest.fn(),
     getAll: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -30,42 +32,59 @@ describe('CategoryController', () => {
 
   describe('create', () => {
     const createCategoryDto: CreateCategoryDto = {
-      name: 'Test Category',
+      name: 'New Category',
     };
 
     it('should create a category successfully', async () => {
-      const expectedResult: Category = {
-        id: '123e4567-e89b-12d3-a456-426614174111',
-        name: 'Test Category',
-        subcategories: [],
-        products: [],
-      } as Category;
-
-      mockCategoryService.create.mockResolvedValue(expectedResult);
+      const mockCategory = { id: '1', name: 'New Category' };
+      mockCategoryService.create.mockResolvedValue(mockCategory);
 
       const result = await controller.create(createCategoryDto);
-
-      expect(result).toEqual(expectedResult);
+      expect(result).toEqual(mockCategory);
       expect(service.create).toHaveBeenCalledWith(createCategoryDto);
     });
   });
 
   describe('getAll', () => {
     it('should return all categories', async () => {
-      const expectedResult: Category[] = [
-        {
-          id: '123e4567-e89b-12d3-a456-426614174111',
-          name: 'Test Category',
-          subcategories: [],
-        },
-      ];
-
-      mockCategoryService.getAll.mockResolvedValue(expectedResult);
+      const mockCategories = [{ id: '1', name: 'Test Category' }];
+      mockCategoryService.getAll.mockResolvedValue(mockCategories);
 
       const result = await controller.getAll();
-
-      expect(result).toEqual(expectedResult);
+      expect(result).toEqual(mockCategories);
       expect(service.getAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('update', () => {
+    const updateCategoryDto: CreateCategoryDto = {
+      name: 'Updated Category',
+    };
+
+    it('should update a category successfully', async () => {
+      const mockCategory: Category = {
+        id: '1',
+        name: 'Updated Category',
+        subcategories: [],
+        products: [],
+      } as Category;
+
+      mockCategoryService.update.mockResolvedValue(mockCategory);
+
+      const result = await controller.update(mockCategory.id, updateCategoryDto);
+      expect(result).toEqual(mockCategory);
+      expect(service.update).toHaveBeenCalledWith(mockCategory.id, updateCategoryDto);
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a category successfully', async () => {
+      const mockCategoryId = '1';
+      mockCategoryService.delete.mockResolvedValue(undefined);
+
+      const result = await controller.delete(mockCategoryId);
+      expect(result).toBeUndefined();
+      expect(service.delete).toHaveBeenCalledWith(mockCategoryId);
     });
   });
 });

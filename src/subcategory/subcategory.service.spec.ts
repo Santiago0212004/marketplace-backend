@@ -17,6 +17,7 @@ describe('SubcategoryService', () => {
     save: jest.fn(),
     findOne: jest.fn(),
     find: jest.fn(),
+    remove: jest.fn()
   });
 
   beforeEach(async () => {
@@ -88,6 +89,81 @@ describe('SubcategoryService', () => {
 
       await expect(service.create(createSubcategoryDto)).rejects.toThrow(InternalServerErrorException);
       await expect(service.create(createSubcategoryDto)).rejects.toThrow('An unexpected error occurred while creating the subcategory');
+    });
+  });
+
+  describe('update', () => {
+    const updateSubcategoryDto: CreateSubcategoryDto = {
+      name: 'Updated Subcategory',
+      categoryId: '123e4567-e89b-12d3-a456-426614174000',
+    };
+
+    const mockCategory = {
+      id: updateSubcategoryDto.categoryId,
+      name: 'Test Category',
+    };
+
+    const mockSubcategory = {
+      id: '123e4567-e89b-12d3-a456-426614174111',
+      name: updateSubcategoryDto.name,
+      category: mockCategory,
+    };
+
+    it('should update a subcategory successfully', async () => {
+      jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(mockSubcategory as Subcategory);
+      jest.spyOn(categoryRepository, 'findOne').mockResolvedValue(mockCategory as Category);
+      jest.spyOn(subcategoryRepository, 'save').mockResolvedValue(mockSubcategory as Subcategory);
+
+      const result = await service.update('123', updateSubcategoryDto);
+
+      expect(result).toEqual(mockSubcategory);
+      expect(subcategoryRepository.save).toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if subcategory is not found', async () => {
+      jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.update('invalid-id', updateSubcategoryDto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if category is not found', async () => {
+      jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(mockSubcategory as Subcategory);
+      jest.spyOn(categoryRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.update('123', updateSubcategoryDto)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('delete', () => {
+    const deleteSubcategoryDto: CreateSubcategoryDto = {
+      name: 'Subcategory to delete',
+      categoryId: '123e4567-e89b-12d3-a456-426614174000',
+    };
+
+    const mockCategory = {
+      id: deleteSubcategoryDto.categoryId,
+      name: 'Test Category',
+    };
+
+    const mockSubcategory = {
+      id: '123e4567-e89b-12d3-a456-426614174111',
+      name: deleteSubcategoryDto.name,
+      category: mockCategory,
+    };
+
+    it('should delete a subcategory successfully', async () => {
+      jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(mockSubcategory as Subcategory);
+      jest.spyOn(subcategoryRepository, 'remove').mockResolvedValue(mockSubcategory as Subcategory);
+
+      await service.delete('123');
+
+      expect(subcategoryRepository.remove).toHaveBeenCalledWith(mockSubcategory);
+    });
+
+    it('should throw NotFoundException if subcategory is not found', async () => {
+      jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(service.delete('invalid-id')).rejects.toThrow(NotFoundException);
     });
   });
 

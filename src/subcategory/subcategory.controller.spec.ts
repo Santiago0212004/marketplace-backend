@@ -11,6 +11,8 @@ describe('SubcategoryController', () => {
   const mockSubcategoryService = {
     create: jest.fn(),
     getAll: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -50,6 +52,41 @@ describe('SubcategoryController', () => {
 
       expect(result).toEqual(expectedResult);
       expect(service.create).toHaveBeenCalledWith(createSubcategoryDto);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a subcategory successfully', async () => {
+      const updateSubcategoryDto: CreateSubcategoryDto = {
+        name: 'Updated Subcategory',
+        categoryId: '123e4567-e89b-12d3-a456-426614174000',
+      };
+
+      const expectedResult: Subcategory = {
+        id: '123e4567-e89b-12d3-a456-426614174111',
+        name: 'Updated Subcategory',
+        category: {
+          id: updateSubcategoryDto.categoryId,
+          name: 'Test Category',
+        },
+      } as Subcategory;
+
+      mockSubcategoryService.update.mockResolvedValue(expectedResult);
+
+      const result = await controller.update('123', updateSubcategoryDto);
+
+      expect(result).toEqual(expectedResult);
+      expect(service.update).toHaveBeenCalledWith('123', updateSubcategoryDto);
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a subcategory successfully', async () => {
+      mockSubcategoryService.delete.mockResolvedValue(null);
+
+      await controller.delete('123');
+
+      expect(service.delete).toHaveBeenCalledWith('123');
     });
   });
 
