@@ -8,6 +8,10 @@ import { RoleModule } from './role/role.module';
 import { ProductModule } from './product/product.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { CategoryModule } from './category/category.module';
+import { SizeModule } from './size/size.module';
+import { OptionModule } from './option/option.module';
+import { UnitModule } from './unit/unit.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -28,6 +32,10 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     UserModule,
     RoleModule,
+    UnitModule,
+    OrderModule,
+    OptionModule,
+    SizeModule,
     ProductModule,
     SubcategoryModule,
     CategoryModule,

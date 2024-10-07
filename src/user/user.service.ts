@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException , Request} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
@@ -80,5 +80,9 @@ export class UserService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
     await this.userRepository.delete(user.id);
+  }
+
+  async getProfile(@Request() req): Promise<User> {
+    return req.user;
   }
 }
