@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Param, Patch, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Body, Get, Param, Patch, Delete, UseGuards , Request} from '@nestjs/common';
 import { UserService } from './user.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -8,6 +8,13 @@ import { User } from './entity/user.entity';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'seller', 'buyer')
+  @Get('me')
+  getProfile(@Request() req) {
+    return this.userService.getProfile(req);
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'seller', 'buyer')

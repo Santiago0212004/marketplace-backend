@@ -1,12 +1,12 @@
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException, Request } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from 'src/user/entity/user.entity';
-import { CurrentUserService } from 'src/common/currentUser.service';
 import { Order } from './entity/order.entity';
 import { Option } from 'src/option/entity/option.entity';
 import { Unit } from 'src/unit/entity/unit.entity';
+import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -23,12 +23,13 @@ export class OrderService {
     @InjectRepository(Unit)
     private readonly unitRepository: Repository<Unit>,
     
-    private readonly currentUserService: CurrentUserService
+    private readonly userService: UserService
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+  async create(createOrderDto: CreateOrderDto, @Request() req): Promise<Order> {
     const {optionId } = createOrderDto;
-    const buyerId = this.currentUserService.getCurrentUserId();
+    const buyer = await this.userService.getProfile(req);
+    const buyerId = buyer.id;
     const createdDate = new Date();
 
     try {
@@ -74,10 +75,51 @@ export class OrderService {
   async getAll(): Promise<Order[]> {
     try {
       return await this.orderRepository.find({
-        relations: ['option']
+        relations: ['option','buyer']
       });
     } catch {
       throw new InternalServerErrorException('An unexpected error occurred while retrieving orders');
     }
   }
+
+  async delete(orderId: string): Promise<void> {
+    try {
+      const order = await this.orderRepository.findOne({ where: { id: orderId } });
+      if (!order) {
+        throw new NotFoundException(`Order with ID ${orderId} not found`);
+      }
+  
+      await this.orderRepository.delete(order);
+
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      } else {
+        throw new InternalServerErrorException('An unexpected error occurred while deleting the order');
+      }
+    }
+  }
+
+  async getOrdersBySeller(sellerId: string): Promise<Order[]> {
+    try {
+      return await this.orderRepository.find({
+        where: { option: { size: { product: { seller: { id: sellerId } } } } },
+        relations: ['option', 'option.size', 'option.size.product', 'option.size.product.seller']
+      });
+    } catch {
+      throw new InternalServerErrorException('An unexpected error occurred while retrieving orders by seller');
+    }
+  }
+
+  async getOrdersByBuyer(buyerId: string): Promise<Order[]> {
+    try {
+      return await this.orderRepository.find({
+        where: { buyer: { id: buyerId } },
+        relations: ['option']
+      });
+    } catch {
+      throw new InternalServerErrorException('An unexpected error occurred while retrieving orders by buyer');
+    }
+  }
+
 }
