@@ -1,10 +1,10 @@
-import { Body, Controller, Post, Get, UseGuards, Param} from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Param, Delete} from '@nestjs/common';
 import { OptionService } from './option.service';
 import { CreateOptionDto } from './dto/createOption.dto';
 import { Option } from './entity/option.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('options')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -26,5 +26,11 @@ export class OptionController {
     @Get('size/:id')
     async getOptionsBySize(@Param('id') sizeId: string): Promise<Option[]> {
         return this.optionService.getOptionsBySize(sizeId);
+    }
+
+    @Delete(':id')
+    @Roles('admin')
+    async delete(@Param('id') id: string) {
+        return this.optionService.delete(id);
     }
 }

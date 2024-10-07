@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Option } from './entity/option.entity';
 import { CreateOptionDto } from './dto/createOption.dto';
-import { Size } from 'src/size/entity/size.entity';
+import { Size } from '../size/entity/size.entity';
 
 
 
@@ -64,4 +64,12 @@ export class OptionService {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving options');
         }
     }
+
+    async delete(id: string): Promise<void> {
+        const option = await this.optionRepository.findOne({where: {id}});
+        if (!option) {
+          throw new NotFoundException(`Option with id ${id} not found`);
+        }
+        await this.optionRepository.delete(option.id);
+      }
 }

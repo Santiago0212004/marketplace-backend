@@ -1,10 +1,10 @@
-import { Body, Controller, Post, Get, UseGuards, Param} from '@nestjs/common';
+import { Body, Controller, Post, Get, UseGuards, Param, Delete} from '@nestjs/common';
 import { SizeService } from './size.service';
 import { CreateSizeDto } from './dto/createSize.dto';
 import { Size } from './entity/size.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('sizes')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -26,5 +26,11 @@ export class SizeController {
     @Get('product/:id')
     async getSizesByProductId(@Param('id') productId: string): Promise<Size[]> {
         return this.sizeService.getSizesByProductId(productId);
+    }
+
+    @Delete(':id')
+    @Roles('admin')
+    async delete(@Param('id') id: string) {
+        return this.sizeService.delete(id);
     }
 }

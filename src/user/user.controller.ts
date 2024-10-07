@@ -1,15 +1,16 @@
-import { Controller, Body, Get, Param, Patch, Delete, UseGuards , Request} from '@nestjs/common';
+import { Controller, Body, Get, Param, Delete, UseGuards, Put, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { User } from './entity/user.entity';
 
+
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'seller', 'buyer')
   @Get('me')
   getProfile(@Request() req) {
@@ -18,19 +19,23 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'seller', 'buyer')
-  @Get(':id')
+  @Get('id/:id')
   async getUserById(@Param('id') id: string) {
     return this.userService.findById(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'seller', 'buyer')
-  @Patch(':id')
+  @Get('email/:email')
+  async getUserByEmail(@Param('email') email: string) {
+    return this.userService.findByEmail(email);
+  }
+
+  @Roles('admin', 'seller', 'buyer')
+  @Put(':id')
   async updateUser(@Param('id') id: string, @Body() updateData: Partial<User>) {
     return this.userService.updateUser(id, updateData);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
@@ -38,7 +43,6 @@ export class UserController {
     return { message: 'User deleted successfully' };
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Get()
   async getAllUsers() {

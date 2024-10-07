@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Unit } from './entity/unit.entity';
 import { CreateUnitDto } from './dto/createUnit.dto';
-import { Option } from 'src/option/entity/option.entity';
+import { Option } from '../option/entity/option.entity';
 
 
 
@@ -58,5 +58,14 @@ export class UnitService {
         } catch {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving utins by option');
         }
+    }
+
+
+    async delete(id: string): Promise<void> {
+        const unit = await this.unitRepository.findOne({where: {id}});
+        if (!unit) {
+          throw new NotFoundException(`Unit with id ${id} not found`);
+        }
+        await this.unitRepository.delete(unit.id);
     }
 }

@@ -1,4 +1,3 @@
-// src/role/role.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,6 +11,7 @@ export class RoleService {
     ) {}
 
     async getAll(): Promise<Role[]> {
-        return this.roleRepository.find();
+        return await this.roleRepository.find();
     }
+
 }

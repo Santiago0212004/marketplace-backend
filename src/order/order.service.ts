@@ -2,11 +2,11 @@ import { Injectable, ConflictException, NotFoundException, InternalServerErrorEx
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
-import { User } from 'src/user/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { Order } from './entity/order.entity';
-import { Option } from 'src/option/entity/option.entity';
-import { Unit } from 'src/unit/entity/unit.entity';
-import { UserService } from 'src/user/user.service';
+import { Option } from '../option/entity/option.entity';
+import { Unit } from '../unit/entity/unit.entity';
+import { UserService } from '../user/user.service';
 
 
 @Injectable()
@@ -82,22 +82,12 @@ export class OrderService {
     }
   }
 
-  async delete(orderId: string): Promise<void> {
-    try {
-      const order = await this.orderRepository.findOne({ where: { id: orderId } });
-      if (!order) {
-        throw new NotFoundException(`Order with ID ${orderId} not found`);
-      }
-  
-      await this.orderRepository.delete(order);
-
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      } else {
-        throw new InternalServerErrorException('An unexpected error occurred while deleting the order');
-      }
+  async delete(id: string): Promise<void> {
+    const order = await this.orderRepository.findOne({where: {id}});
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
     }
+    await this.orderRepository.delete(order.id);
   }
 
   async getOrdersBySeller(sellerId: string): Promise<Order[]> {

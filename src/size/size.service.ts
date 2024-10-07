@@ -62,4 +62,12 @@ export class SizeService {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
         }
     }
+
+    async delete(id: string): Promise<void> {
+        const size = await this.sizeRepository.findOne({where: {id}});
+        if (!size) {
+          throw new NotFoundException(`Size with id ${id} not found`);
+        }
+        await this.sizeRepository.delete(size.id);
+    }
 }

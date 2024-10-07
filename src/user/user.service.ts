@@ -18,7 +18,7 @@ export class UserService {
   async createUser(registerUserDto: RegisterUserDto): Promise<User> {
     const { fullName, email, password, address, roleName } = registerUserDto;
 
-    const existingUser = await this.findByEmail(email);
+    const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -43,7 +43,11 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { email }, relations: ['role'] });
+    const user = await this.userRepository.findOne({ where: { email }, relations: ['role'] });
+    if(!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+    return user;
   }
 
   async findById(id: string): Promise<User | undefined> {
@@ -59,13 +63,22 @@ export class UserService {
   }
 
   async updateUser(id: string, updateData: Partial<User>): Promise<User> {
-    const user = await this.findById(id);
+    const user = await this.userRepository.findOne({where: {id}});
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
     await this.userRepository.update(user.id, updateData);
-    return this.userRepository.findOne({ where: { id: user.id } });
+
+    return await this.userRepository.findOne({ where: { id: user.id } });
   }
 
+
   async deleteUser(id: string): Promise<void> {
-    const user = await this.findById(id);
+    const user = await this.userRepository.findOne({where: {id}});
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
     await this.userRepository.delete(user.id);
   }
 

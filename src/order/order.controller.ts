@@ -19,8 +19,8 @@ export class OrderController {
 
     @Delete(':id')
     @Roles('admin')
-    async delete(@Body() orderId: string) {
-        return this.orderService.delete(orderId);
+    async delete(@Param('id') id: string) {
+        return this.orderService.delete(id);
     }
 
     @Get()
