@@ -10,8 +10,6 @@ import { CurrentUserService } from '../common/currentUser.service';
 
 @Injectable()
 export class ProductService {
-  
-  
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
@@ -92,9 +90,7 @@ export class ProductService {
   async getAll(): Promise<Product[]> {
     try {
       return await this.productRepository.find({
-        where:{
-          seller:{id:this.currentUserService.getCurrentUserId()}
-        },
+        
         relations: ['seller', 'subcategory']// Opcional: cargar relaciones si las necesitas
       });
     } catch {

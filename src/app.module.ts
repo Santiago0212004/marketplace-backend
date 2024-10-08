@@ -8,15 +8,12 @@ import { RoleModule } from './role/role.module';
 import { ProductModule } from './product/product.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { CategoryModule } from './category/category.module';
-<<<<<<< HEAD
 import { ReviewController } from './review/review.controller';
 import { ReviewModule } from './review/review.module';
-=======
 import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
 import { UnitModule } from './unit/unit.module';
 import { OrderModule } from './order/order.module';
->>>>>>> a95e98b3eb2fe40650e0251ba8a6135438b0558d
 
 @Module({
   imports: [

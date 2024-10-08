@@ -19,7 +19,7 @@ export class ReviewService {
         private readonly reviewSellerRepository: Repository<ReviewSeller>,
         
       ) {}
-    async getAll(id: string, typeReview: string): Promise<Object> {
+    async getAll(id: string, typeReview: string): Promise<Review[] | ReviewSeller[]> {
         try{
             if(typeReview === 'product'){
                 return await this.reviewRepository.find({ where:{
@@ -34,7 +34,7 @@ export class ReviewService {
         }
        
     }
-    async create(createReviewDto: CreateReviewDto, typeReview: string): Promise<Object> {
+    async create(createReviewDto: CreateReviewDto, typeReview: string): Promise<Review | ReviewSeller> {
 
         const {rating, comment, id} = createReviewDto
 
@@ -52,10 +52,14 @@ export class ReviewService {
 
             return await this.reviewRepository.save(newReview)
         }
-        const buyer = await this.userService.findById(id)
+        const seller = await this.userService.findById(id)
+
+        if(!seller){
+            throw new NotFoundException(`Seller with id ${id} not found`)
+        }
 
         const newSeller = this.reviewSellerRepository.create({
-            rating, comment, buyer
+            rating, comment, buyer:seller
         })
 
         return await this.reviewSellerRepository.save(newSeller)//
