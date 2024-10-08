@@ -45,7 +45,7 @@ $ yarn run start:dev
 $ yarn run start:prod
 ```
 
-## Run test
+## Run tests
 
 ```bash
 # unit tests
