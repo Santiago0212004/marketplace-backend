@@ -8,11 +8,10 @@ import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { CurrentUserService } from '../common/currentUser.service';
 
-interface MockProduct extends Omit<Product, 'seller' | 'subcategory' | 'reviews' | 'orders' | 'sizes'> {
+interface MockProduct extends Omit<Product, 'seller' | 'subcategory' | 'reviews' | 'sizes'> {
   seller: MockUser;
   subcategory: MockSubcategory;
   reviews: any[];
-  orders: any[];
   sizes: any[];
 }
 
@@ -126,7 +125,6 @@ describe('ProductService', () => {
       subcategory: mockSubcategory,
       seller: mockSeller,
       reviews: [],
-      orders: [],
       sizes: []
     };
 
@@ -211,7 +209,6 @@ describe('ProductService', () => {
           products: []
         },
         reviews: [],
-        orders: [],
         sizes: []
       }
     ];

@@ -1,9 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { User } from '../../user/entity/user.entity';
 
-import { Product } from '../../product/entity/product.entity';
-
-@Entity('reviews')
-export class Review {
+@Entity('reviewSeller')
+export class ReviewSeller {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -13,6 +12,6 @@ export class Review {
   @Column()
   comment: string;
 
-  @ManyToOne(() => Product, (product) => product.reviews)
-  product: Product;
+  @ManyToOne(() => User, (user) => user.reviews)
+  buyer: User;
 }

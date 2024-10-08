@@ -8,11 +8,12 @@ import { RoleModule } from './role/role.module';
 import { ProductModule } from './product/product.module';
 import { SubcategoryModule } from './subcategory/subcategory.module';
 import { CategoryModule } from './category/category.module';
+import { ReviewController } from './review/review.controller';
+import { ReviewModule } from './review/review.module';
 import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
 import { UnitModule } from './unit/unit.module';
 import { OrderModule } from './order/order.module';
-import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -42,7 +43,7 @@ import { ReviewModule } from './review/review.module';
     CategoryModule,
     ReviewModule
   ],
-  controllers: [],
+  controllers: [ReviewController],
   providers: [],
 })
 export class AppModule {}
