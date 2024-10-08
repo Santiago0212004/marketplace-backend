@@ -1,7 +1,7 @@
 import { Role } from '../../src/role/entity/role.entity';
 
 describe('Role API', () => {
-  const apiUrl = 'https://marketplace-backend-delta.vercel.app';
+  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
 
   let authToken = '';
   let falseAuthToken = '223e4&67-e8b9-1d23-b457-421124170881';

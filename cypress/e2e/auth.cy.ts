@@ -1,5 +1,5 @@
 describe('Auth API E2E Tests', () => {
-  const apiUrl = 'https://marketplace-backend-delta.vercel.app';
+  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
   let accessToken = '';
   let userId = '';
   let token = '';
