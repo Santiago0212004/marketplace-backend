@@ -1,17 +1,18 @@
 describe('User API E2E Tests', () => {
-  const apiUrl = 'http://localhost:3000';
+  const apiUrl = 'https://marketplace-backend-delta.vercel.app';
   let accessToken = '';
   let userId = '';
   let nonexistentUserId = '123e4567-e89b-12d3-a456-426614174000';
   let falseAccessToken = '321e4567-e8b9-1d23-a456-421664170040';
   const userCredentials = { email: 'newtester10@example.com', password: 'Password123!' };
 
+  const mockAdmin = {
+    email: 'admin@example.com',
+    password: 'Password123!'
+  }
+
   before(() => {
-    cy.request('POST', `${apiUrl}/auth/login`, {
-      email: 'admin@example.com',
-      password: 'Password123!'
-    })
-      .then((response) => {
+    cy.request('POST', `${apiUrl}/auth/login`, mockAdmin).then((response) => {
         accessToken = response.body.access_token;
       });
   });
