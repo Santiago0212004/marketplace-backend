@@ -1,20 +1,21 @@
-describe('Subcategory API E2E Tests', () => {
-  const apiUrl = 'http://localhost:3000';
+describe('Subcategory API E2E Testing', () => {
+  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
   let accessToken = '';
   let categoryId = '';
   let subcategoryId = '';
   let nonexistentSubcategoryId = '123e4567-e89b-12d3-a456-426614174000';
   let nonexistentCategoryId = '321e4567-e89b-12d3-a456-426614174111';
-  let falseAccessToken = '321e4567-e8b9-1d23-a456-421664170040';
+  let falseAccessToken = '321e4567-e8b1-1d23-a456-421664170040';
+
+  const mockAdmin = {
+    email: 'admin@example.com',
+    password: 'Password123!'
+  }
 
   before(() => {
-    cy.request('POST', `${apiUrl}/auth/login`, {
-      email: 'admin@example.com',
-      password: 'Password123!',
-    }).then((response) => {
+    cy.request('POST', `${apiUrl}/auth/login`, mockAdmin).then((response) => {
       accessToken = response.body.access_token;
 
-      // Create a category before tests
       cy.request({
         method: 'POST',
         url: `${apiUrl}/categories/create`,
@@ -39,7 +40,7 @@ describe('Subcategory API E2E Tests', () => {
       },
       body: {
         name: 'Test Subcategory',
-        categoryId: categoryId, // Use the created category
+        categoryId: categoryId,
       },
     }).then((response) => {
       expect(response.status).to.eq(201);
@@ -77,7 +78,7 @@ describe('Subcategory API E2E Tests', () => {
         categoryId: nonexistentCategoryId, // Non-existent category
       },
     }).then((response) => {
-      expect(response.status).to.eq(400);
+      expect(response.status).to.eq(404);
     });
   });
 

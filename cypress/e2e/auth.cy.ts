@@ -1,24 +1,26 @@
 describe('Auth API E2E Tests', () => {
-  const apiUrl = 'http://localhost:3000';
+  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
   let accessToken = '';
   let userId = '';
   let token = '';
 
+  const mockUser = {
+    email: 'tester@example.com',
+    password: 'Password123!',
+    fullName: 'Tester',
+    address: '123 Main St',
+    roleName: 'buyer'
+  }
+
   it('should register a new user successfully', () => {
-    cy.request('POST', `${apiUrl}/auth/register`, {
-      email: 'ggg@example.com',
-      password: 'Password123!',
-      fullName: 'Tester',
-      address: '123 Main St',
-      roleName: 'buyer',
-    }).then((response) => {
+    cy.request('POST', `${apiUrl}/auth/register`, mockUser).then((response) => {
       expect(response.status).to.eq(201);
       expect(response.body).to.have.property('access_token');
       accessToken = response.body.access_token;
 
       cy.request({
         method: 'GET',
-        url: `${apiUrl}/users/email/ggg@example.com`,
+        url: `${apiUrl}/users/email/${mockUser.email}`,
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -31,8 +33,8 @@ describe('Auth API E2E Tests', () => {
 
   it('should login with valid credentials', () => {
     cy.request('POST', `${apiUrl}/auth/login`, {
-      email: 'test@example.com',
-      password: 'Password123!',
+      email: mockUser.email,
+      password: mockUser.password,
     }).then((response) => {
       expect(response.status).to.eq(201);
       expect(response.body).to.have.property('access_token');
@@ -44,7 +46,7 @@ describe('Auth API E2E Tests', () => {
       method: 'POST',
       url: `${apiUrl}/auth/login`,
       body: {
-        email: 'test@example.com',
+        email: mockUser.email,
         password: 'wrong_password',
       },
       failOnStatusCode: false,

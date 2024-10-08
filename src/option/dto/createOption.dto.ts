@@ -8,6 +8,6 @@ export class CreateOptionDto {
     @IsUrl({}, { message: 'Main image URL must be a valid URL' })
     imageUrl: string;
 
-    @IsUUID('4', { message: 'Product ID must be a valid UUID' })
+    @IsString()
     sizeId: string;
 }

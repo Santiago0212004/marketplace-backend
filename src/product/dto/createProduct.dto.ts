@@ -15,6 +15,6 @@ export class CreateProductDto {
   @IsUrl({}, { message: 'Main image URL must be a valid URL' })
   mainImageUrl: string;
 
-  @IsUUID('4', { message: 'Subcategory ID must be a valid UUID' })
+  @IsString()
   subcategoryId: string;
 }
