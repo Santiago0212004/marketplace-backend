@@ -64,7 +64,7 @@ describe('UserService', () => {
   describe('createUser', () => {
     const mockRegisterUserDto: RegisterUserDto = {
       fullName: 'New User',
-      email: 'newuser@example.com',
+      email: 'test@example.com',
       password: 'Password123!',
       address: '456 Another St',
       roleName: 'buyer',
@@ -87,7 +87,7 @@ describe('UserService', () => {
       const result = await userService.createUser(mockRegisterUserDto);
 
       expect(result).toEqual(savedUser);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { email: mockRegisterUserDto.email }, relations: ['role'] });
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { email: mockRegisterUserDto.email } });
       expect(mockRoleRepository.findOne).toHaveBeenCalledWith({ where: { name: mockRegisterUserDto.roleName } });
       expect(mockUserRepository.save).toHaveBeenCalledWith(savedUser);
     });
@@ -117,7 +117,10 @@ describe('UserService', () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       const result = await userService.findById('7bf172f3-c445-4ab4-9407-5f26ffabe4c0');
       expect(result).toEqual(mockUser);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({ where: { id: '7bf172f3-c445-4ab4-9407-5f26ffabe4c0' }, relations: ['role'] });
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { id: '7bf172f3-c445-4ab4-9407-5f26ffabe4c0' },
+        relations: ['role']
+      });
     });
 
     it('should throw NotFoundException if user is not found', async () => {
@@ -125,6 +128,23 @@ describe('UserService', () => {
       await expect(userService.findById('nonexistent-id')).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('findByEmail', () => {
+    it('should return a user by ID', async () => {
+      mockUserRepository.findOne.mockResolvedValue(mockUser);
+      const result = await userService.findByEmail('test@example.com');
+      expect(result).toEqual(mockUser);
+      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
+        where: { email: 'test@example.com' },
+        relations: ['role']
+      });
+    });
+    it('should throw NotFoundException if user is not found', async () => {
+      mockUserRepository.findOne.mockResolvedValue(undefined);
+      await expect(userService.findByEmail('nonexistent@example.com')).rejects.toThrow(NotFoundException);
+    });
+  });
+
 
   describe('updateUser', () => {
     it('should update and return the user', async () => {
