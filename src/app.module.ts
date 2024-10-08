@@ -20,7 +20,7 @@ import { ReviewModule } from './review/review.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'mssql',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USER,
