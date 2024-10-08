@@ -1,9 +1,10 @@
-import { IsBoolean, IsUUID } from 'class-validator';
+import { IsBoolean, IsString, IsUUID } from 'class-validator';
 
 export class CreateUnitDto {
     @IsBoolean()
     sold: boolean;
 
+    @IsString()
     optionId: string;
 }
 

@@ -1,5 +1,5 @@
 describe('Subcategory API E2E Tests', () => {
-  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
+  const apiUrl = 'http://localhost:3000';
   let accessToken = '';
   let categoryId = '';
   let subcategoryId = '';
@@ -78,7 +78,7 @@ describe('Subcategory API E2E Tests', () => {
         categoryId: nonexistentCategoryId, // Non-existent category
       },
     }).then((response) => {
-      expect(response.status).to.eq(400);
+      expect(response.status).to.eq(404);
     });
   });
 

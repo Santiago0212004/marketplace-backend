@@ -1,7 +1,6 @@
-import { IsUUID } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateOrderDto {
-
-    @IsUUID('4', { message: 'Option ID must be a valid UUID' })
+    @IsString()
     optionId: string;
 }

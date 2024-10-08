@@ -15,5 +15,6 @@ export class CreateProductDto {
   @IsUrl({}, { message: 'Main image URL must be a valid URL' })
   mainImageUrl: string;
 
+  @IsString()
   subcategoryId: string;
 }

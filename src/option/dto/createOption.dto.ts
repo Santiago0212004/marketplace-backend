@@ -8,5 +8,6 @@ export class CreateOptionDto {
     @IsUrl({}, { message: 'Main image URL must be a valid URL' })
     imageUrl: string;
 
+    @IsString()
     sizeId: string;
 }

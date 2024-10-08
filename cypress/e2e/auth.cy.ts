@@ -1,5 +1,5 @@
 describe('Auth API E2E Tests', () => {
-  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
+  const apiUrl = 'http://localhost:3000';
   let accessToken = '';
   let userId = '';
   let token = '';
