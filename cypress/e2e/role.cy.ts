@@ -1,15 +1,18 @@
 import { Role } from '../../src/role/entity/role.entity';
 
 describe('Role API', () => {
-  const apiUrl = 'http://localhost:3000';
+  const apiUrl = 'https://marketplace-backend-production-d4eb.up.railway.app';
 
   let authToken = '';
+  let falseAuthToken = '223e4&67-e8b9-1d23-b457-421124170881';
+
+  const mockAdmin = {
+    email: 'admin@example.com',
+    password: 'Password123!'
+  }
 
   before(() => {
-    cy.request('POST', `${apiUrl}/auth/login`, {
-      email: 'admin@example.com',
-      password: 'Password123!',
-    }).then((response) => {
+    cy.request('POST', `${apiUrl}/auth/login`, mockAdmin).then((response) => {
       authToken = response.body.access_token;
     });
   });
@@ -32,10 +35,13 @@ describe('Role API', () => {
     });
   });
 
-  it('should not allow access without JWT', () => {
+  it('should not allow access with false JWT', () => {
     cy.request({
       method: 'GET',
       url: `${apiUrl}/roles`,
+      headers: {
+        Authorization: `Bearer ${falseAuthToken}`,
+      },
       failOnStatusCode: false,
     }).then((response) => {
       expect(response.status).to.eq(401);
