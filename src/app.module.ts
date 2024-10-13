@@ -1,4 +1,3 @@
-// app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -14,6 +13,7 @@ import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
 import { UnitModule } from './unit/unit.module';
 import { OrderModule } from './order/order.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -41,7 +41,8 @@ import { OrderModule } from './order/order.module';
     ProductModule,
     SubcategoryModule,
     CategoryModule,
-    ReviewModule
+    ReviewModule,
+    UploadModule
   ],
   controllers: [ReviewController],
   providers: [],
