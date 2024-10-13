@@ -2,6 +2,8 @@ import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express';
 import { supabase } from '../supabase.client';
 import { v4 as uuidv4 } from 'uuid';
+import { Express } from 'express';
+import { Multer } from 'multer';
 
 @Controller('upload')
 export class UploadController {
