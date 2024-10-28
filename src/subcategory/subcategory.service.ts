@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Subcategory } from './entity/subcategory.entity';
 import { CreateSubcategoryDto } from './dto/createSubcategory.dto';
 import { Category } from '../category/entity/category.entity';
+import { SubcategoryDto } from './dto/subcategory.dto';
 
 @Injectable()
 export class SubcategoryService {
@@ -45,10 +46,36 @@ export class SubcategoryService {
         }
     }
 
-    async getAll(): Promise<Subcategory[]> {
+    async getAll(): Promise<SubcategoryDto[]> {
         try {
-            return await this.subcategoryRepository.find({ relations: ['category'] });
-        } catch {
+            const subcategories = await this.subcategoryRepository.find({ relations: ['category'] });
+            return subcategories.map((subcategory): SubcategoryDto => {
+                return {
+                    id: subcategory.id,
+                    name: subcategory.name,
+                    category: subcategory.category.name
+                }
+            });
+        } catch(error) {
+            console.log(error);
+            throw new InternalServerErrorException('An unexpected error occurred while retrieving subcategories');
+        }
+    }
+
+    async getByCategory(categoryId: string): Promise<SubcategoryDto[]> {
+        try {
+            const subcategories = await this.subcategoryRepository.find({ where: { category: { id: categoryId } }, relations: ['category'] });
+
+            return subcategories.map((subcategory): SubcategoryDto => {
+               return {
+                   id: subcategory.id,
+                   name: subcategory.name,
+                   category: subcategory.category.name
+               }
+            });
+
+        } catch(error) {
+            console.log(error);
             throw new InternalServerErrorException('An unexpected error occurred while retrieving subcategories');
         }
     }

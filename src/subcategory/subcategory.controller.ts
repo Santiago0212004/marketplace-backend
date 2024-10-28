@@ -5,6 +5,7 @@ import { Subcategory } from './entity/subcategory.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { SubcategoryDto } from './dto/subcategory.dto';
 
 @Controller('subcategories')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -18,9 +19,15 @@ export class SubcategoryController {
     }
 
     @Roles('admin', 'seller', 'buyer')
-    @Get()
-    async getAll(): Promise<Subcategory[]> {
+    @Get('all')
+    async getAll(): Promise<SubcategoryDto[]> {
         return this.subcategoryService.getAll();
+    }
+
+    @Roles('admin', 'seller', 'buyer')
+    @Get(':categoryId')
+    async getByCategory(@Param('categoryId') categoryId: string): Promise<SubcategoryDto[]> {
+        return this.subcategoryService.getByCategory(categoryId);
     }
 
     @Roles('admin', 'seller')
