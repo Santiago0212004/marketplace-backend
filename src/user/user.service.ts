@@ -3,16 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entity/user.entity';
 import { RegisterUserDto } from '../auth/dto/auth.dto';
+import { ReviewService } from 'src/review/review.service';
 import { Role } from '../role/entity/role.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>
+    private readonly roleRepository: Repository<Role>,
+    private readonly reviewService: ReviewService
   ) {}
 
   async createUser(registerUserDto: RegisterUserDto): Promise<User> {
@@ -85,4 +88,19 @@ export class UserService {
   async getProfile(@Request() req): Promise<User> {
     return req.user;
   }
+
+  setRating(seller: User, rating: number) {
+    const reviews: any = this.reviewService.getAll(seller.id, "seller")
+    let count: number
+    let quantity: number
+    for (let i = 0; i < reviews.length; i++) {
+      count+=reviews[i]
+      quantity+=1
+    }
+  
+    seller.rating= (count+rating)/(quantity+1)
+
+    this.userRepository.save(seller)
+  }
+  
 }

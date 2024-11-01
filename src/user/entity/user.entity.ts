@@ -32,4 +32,7 @@ export class User {
 
   @OneToMany(() => ReviewSeller, (reviewSeller) => reviewSeller.buyer, { cascade: true })
   reviews: ReviewSeller[];
+
+  @Column('int')
+  rating?:number
 }

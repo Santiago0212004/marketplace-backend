@@ -1,11 +1,14 @@
 import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { Subcategory } from '../subcategory/entity/subcategory.entity';
 import { User } from '../user/entity/user.entity';
 import { CurrentUserService } from '../common/currentUser.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Review } from 'dist/src/review/entity/review.entity';
+import { ReviewService } from 'src/review/review.service';
 
 
 @Injectable()
@@ -17,7 +20,8 @@ export class ProductService {
     private readonly subcategoryRepository: Repository<Subcategory>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly currentUserService: CurrentUserService
+    private readonly currentUserService: CurrentUserService,
+    private readonly reviewService: ReviewService
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product> {
@@ -87,12 +91,39 @@ export class ProductService {
     return newProduct
   }
 
-  async getAll(): Promise<Product[]> {
+  async getAll(paginationDto: PaginationDto): Promise<Product[]> {
     try {
+
+      const {category, priceMin, priceMax, qualification } = paginationDto
+      let whereCondition: any 
+      if(category !==undefined){
+        whereCondition = {
+          subcategory: {
+            category: {
+              name: category
+            }
+          }
+        };
+      }
+      
+      
+      if (priceMin !== undefined && priceMax !== undefined) {
+        whereCondition.price = Between(priceMin, priceMax);
+      } else if (priceMin !== undefined) {
+        whereCondition.price = MoreThan(priceMin);
+      } else if (priceMax !== undefined) {
+        whereCondition.price = LessThanOrEqual(priceMax);
+      }
+      
+      if (qualification!== undefined){
+        whereCondition.rating = MoreThan(qualification);
+      }
+      
       return await this.productRepository.find({
-        
-        relations: ['seller', 'subcategory']// Opcional: cargar relaciones si las necesitas
+        where: whereCondition,
+        relations: ['seller', 'subcategory'] 
       });
+
     } catch {
       throw new InternalServerErrorException('An unexpected error occurred while retrieving products');
     }
@@ -101,4 +132,20 @@ export class ProductService {
   findOne(id: string) {
     return this.productRepository.findOne({where: { id }})
   }
+
+  setRating(product: Product, rating: number) {
+
+    const reviews: any = this.reviewService.getAll(product.id, "product")
+    let count: number
+    let quantity: number
+    for (let i = 0; i < reviews.length; i++) {
+      count+=reviews[i]
+      quantity+=1
+    }
+  
+    product.rating= (count+rating)/(quantity+1)
+
+    this.productRepository.save(product)
+  }
+
 }

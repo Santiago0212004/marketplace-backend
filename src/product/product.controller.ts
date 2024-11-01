@@ -1,9 +1,10 @@
-import { Body, Controller, Post, UseGuards, Patch, Param, ParseUUIDPipe, Delete, Req, Get} from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Patch, Param, ParseUUIDPipe, Delete, Req, Get, Query} from '@nestjs/common';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { ProductService } from './product.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('product')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,7 +31,7 @@ export class ProductController {
 
     @Get('seller')
     @Roles('seller', 'admin')
-    async findAll(){
-        return this.productService.getAll()
+    async findAll(@Query()paginationDto: PaginationDto){
+        return this.productService.getAll(paginationDto)
     }
 }

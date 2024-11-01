@@ -50,6 +50,9 @@ export class ReviewService {
                 rating, comment, product
             })
 
+            this.productService.setRating(product, rating)
+
+
             return await this.reviewRepository.save(newReview)
         }
         const seller = await this.userService.findById(id)
@@ -61,6 +64,9 @@ export class ReviewService {
         const newSeller = this.reviewSellerRepository.create({
             rating, comment, buyer:seller
         })
+
+        this.userService.setRating(seller, rating)
+
 
         return await this.reviewSellerRepository.save(newSeller)//
     }
