@@ -12,6 +12,7 @@ import { Subcategory } from '../subcategory/entity/subcategory.entity';
 import { User } from '../user/entity/user.entity';
 import { ProductDto } from './dto/product.dto';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 @Injectable()
 export class ProductService {
@@ -100,7 +101,7 @@ export class ProductService {
     await this.productRepository.remove(product);
   }
   async update(
-    updateProduct: CreateProductDto,
+    updateProduct: UpdateProductDto,
     id: string,
     user: CurrentUserDto,
   ): Promise<Product> {

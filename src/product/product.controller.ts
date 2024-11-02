@@ -6,6 +6,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CurrentUser } from '../user/decorators/currentUser.decorator';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 @Controller('product')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -20,7 +21,7 @@ export class ProductController {
 
     @Patch('update/:id')
     @Roles('seller', 'admin')
-    async update(@Body() updateProduct: CreateProductDto, @Param('id', ParseUUIDPipe) id:string, @CurrentUser() user: CurrentUserDto){
+    async update(@Body() updateProduct: UpdateProductDto, @Param('id', ParseUUIDPipe) id:string, @CurrentUser() user: CurrentUserDto){
         return this.productService.update(updateProduct, id, user);
     }
 
