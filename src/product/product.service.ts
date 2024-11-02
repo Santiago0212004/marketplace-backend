@@ -1,16 +1,20 @@
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 import { Product } from './entity/product.entity';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { Subcategory } from '../subcategory/entity/subcategory.entity';
 import { User } from '../user/entity/user.entity';
-import { CurrentUserService } from '../common/currentUser.service';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { Review } from 'dist/src/review/entity/review.entity';
 import { ReviewService } from 'src/review/review.service';
-
-
+import { ProductDto } from './dto/product.dto';
 @Injectable()
 export class ProductService {
   constructor(
@@ -20,29 +24,35 @@ export class ProductService {
     private readonly subcategoryRepository: Repository<Subcategory>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly currentUserService: CurrentUserService,
+    @Inject(forwardRef(() => ReviewService))
     private readonly reviewService: ReviewService
   ) {}
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { name, description, price, mainImageUrl, subcategoryId } = createProductDto;
-    const sellerId = this.currentUserService.getCurrentUserId();
-
+  async create(createProductDto: CreateProductDto, user): Promise<Product> {
+    const { name, description, price, mainImageUrl, subcategoryId } =
+      createProductDto;
+      const sellerId: string = user.userId;
     try {
-      const existingProduct = await this.productRepository.findOne({ where: { name } });
+      const existingProduct = await this.productRepository.findOne({
+        where: { name },
+      });
       if (existingProduct) {
-        throw new ConflictException('Product with the same name already exists');
+        throw new ConflictException(
+          'Product with the same name already exists',
+        );
       }
 
-      const subcategory = await this.subcategoryRepository.findOne({ 
-        where: { id: subcategoryId } 
+      const subcategory = await this.subcategoryRepository.findOne({
+        where: { id: subcategoryId },
       });
       if (!subcategory) {
-        throw new NotFoundException(`Subcategory with ID ${subcategoryId} not found`);
+        throw new NotFoundException(
+          `Subcategory with ID ${subcategoryId} not found`,
+        );
       }
 
-      const seller = await this.userRepository.findOne({ 
-        where: { id: sellerId }
+      const seller = await this.userRepository.findOne({
+        where: { id: sellerId },
       });
       if (!seller) {
         throw new NotFoundException(`Seller with ID ${sellerId} not found`);
@@ -54,44 +64,48 @@ export class ProductService {
         price,
         mainImageUrl,
         subcategory,
-        seller
+        seller,
       });
 
       return await this.productRepository.save(newProduct);
     } catch (error) {
-      if (error instanceof ConflictException || error instanceof NotFoundException) {
+      if (
+        error instanceof ConflictException ||
+        error instanceof NotFoundException
+      ) {
         throw error;
       } else {
-        throw new InternalServerErrorException('An unexpected error occurred while creating the product');
+        throw new InternalServerErrorException(
+          'An unexpected error occurred while creating the product',
+        );
       }
     }
   }
 
   async remove(id: string) {
     const product = await this.productRepository.findOne({
-      where: { id }
-    })
+      where: { id },
+    });
 
-    if(!product){
-      throw new NotFoundException(`No product found with this id:${id}`)
+    if (!product) {
+      throw new NotFoundException(`No product found with this id:${id}`);
     }
-    
-    this.productRepository.remove(product)
+
+    this.productRepository.remove(product);
   }
-  async update(updateProduct: CreateProductDto, id: string):Promise<Product> {
-    
+  async update(updateProduct: CreateProductDto, id: string): Promise<Product> {
     const newProduct = await this.productRepository.preload({
-      id:id, ...updateProduct
-    })
+      id: id,
+      ...updateProduct,
+    });
 
-    if(!newProduct){
-      throw new NotFoundException('The product could not be updated')
+    if (!newProduct) {
+      throw new NotFoundException('The product could not be updated');
     }
-    await this.productRepository.save(newProduct)
-    return newProduct
+    await this.productRepository.save(newProduct);
+    return newProduct;
   }
-
-  async getAll(paginationDto: PaginationDto): Promise<Product[]> {
+  async getAll(paginationDto: PaginationDto): Promise<ProductDto[]> {
     try {
 
       const {category, priceMin, priceMax, qualification } = paginationDto
@@ -119,18 +133,31 @@ export class ProductService {
         whereCondition.rating = MoreThan(qualification);
       }
       
-      return await this.productRepository.find({
+      const products = await this.productRepository.find({
         where: whereCondition,
-        relations: ['seller', 'subcategory'] 
+        relations: ['subcategory', 'subcategory.category'] 
       });
 
-    } catch {
+      return products.map((product): ProductDto => {
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          mainImageUrl: product.mainImageUrl,
+          subcategory: product.subcategory.name,
+          category: product.subcategory.category.name,
+        };
+      });
+
+    } catch(error) {
+      console.log(error)
       throw new InternalServerErrorException('An unexpected error occurred while retrieving products');
     }
   }
 
   findOne(id: string) {
-    return this.productRepository.findOne({where: { id }})
+    return this.productRepository.findOne({ where: { id } });
   }
 
   setRating(product: Product, rating: number) {

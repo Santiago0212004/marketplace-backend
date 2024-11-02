@@ -4,6 +4,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { User } from './entity/user.entity';
+import { CurrentUser } from './decorators/currentUser.decorator';
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -13,8 +14,8 @@ export class UserController {
 
   @Roles('admin', 'seller', 'buyer')
   @Get('me')
-  getProfile(@Request() req) {
-    return this.userService.getProfile(req);
+  getProfile(@CurrentUser() user) {
+    return user;
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

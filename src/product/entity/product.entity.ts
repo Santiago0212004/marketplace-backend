@@ -33,7 +33,7 @@ export class Product {
   @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
   subcategory: Subcategory;
 
-  @Column('decimal')
+  @Column('decimal', { nullable: true, default: 0 })
   rating?: number;
 
 }

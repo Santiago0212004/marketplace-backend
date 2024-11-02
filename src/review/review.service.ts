@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductService } from '../product/product.service';
@@ -9,9 +9,11 @@ import { ReviewSeller } from './entity/reviewSeller.entity';
 
 @Injectable()
 export class ReviewService {
-
+    
     constructor(
+        @Inject(forwardRef(() => ProductService))
         private readonly productService: ProductService,
+        @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,

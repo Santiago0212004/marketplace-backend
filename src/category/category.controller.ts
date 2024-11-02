@@ -18,7 +18,7 @@ export class CategoryController {
   }
 
   @Roles('admin', 'seller', 'buyer')
-  @Get()
+  @Get('all')
   async getAll(): Promise<Category[]> {
     return this.categoryService.getAll();
   }

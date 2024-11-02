@@ -1,15 +1,15 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from './entity/review.entity';
 import { ReviewSeller } from './entity/reviewSeller.entity';
-import { ReviewService } from './review.service';
+import { ReviewService } from 'src/review/review.service';
 import { ReviewController } from './review.controller';
-import { ProductModule } from '../product/product.module'
-import { UserModule } from '../user/user.module'
+import { ProductModule } from 'src/product/product.module'
+import { UserModule } from 'src/user/user.module'
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), TypeOrmModule.forFeature([ReviewSeller]), ProductModule,UserModule],
+  imports: [TypeOrmModule.forFeature([Review]), TypeOrmModule.forFeature([ReviewSeller]),forwardRef(() => ProductModule),forwardRef(() => UserModule)],
   providers: [ReviewService],
   controllers: [ReviewController],
   exports:[ReviewService]
