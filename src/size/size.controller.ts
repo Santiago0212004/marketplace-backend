@@ -31,8 +31,8 @@ export class SizeController {
         return this.sizeService.getSizesByProductId(productId);
     }
 
-    @Delete(':id')
-    @Roles('admin')
+    @Delete('delete/:id')
+    @Roles('admin', 'seller')
     async delete(@Param('id') id: string, @CurrentUser() user: CurrentUserDto) {
         return this.sizeService.delete(id, user);
     }

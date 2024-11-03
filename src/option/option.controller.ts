@@ -32,14 +32,14 @@ export class OptionController {
         return this.optionService.getOptionsBySize(sizeId);
     }
 
-    @Delete(':id')
-    @Roles('admin')
+    @Delete('delete/:id')
+    @Roles('admin', 'seller')
     async delete(@Param('id') id: string, @CurrentUser() user: CurrentUserDto) {
         return this.optionService.delete(id, user);
     }
 
     @Put('update/:id')
-    @Roles('admin')
+    @Roles('admin', 'seller')
     async update(@Param('id') id: string, @Body() updateOptionDto: UpdateOptionDto, @CurrentUser() user: CurrentUserDto) {
         return this.optionService.update(id, updateOptionDto, user);
     }
