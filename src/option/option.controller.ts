@@ -7,6 +7,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CurrentUser } from '../user/decorators/currentUser.decorator';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { OptionDto } from './dto/option.dto';
+import { UpdateOptionDto } from './dto/updateOption.dto';
 
 @Controller('options')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -19,14 +21,14 @@ export class OptionController {
     }
 
     @Roles('admin', 'seller', 'buyer')
-    @Get()
-    async getAll(): Promise<Option[]> {
+    @Get('all')
+    async getAll(): Promise<OptionDto[]> {
         return this.optionService.getAll();
     }
 
     @Roles('admin', 'seller', 'buyer')
     @Get('size/:id')
-    async getOptionsBySize(@Param('id') sizeId: string): Promise<Option[]> {
+    async getOptionsBySize(@Param('id') sizeId: string): Promise<OptionDto[]> {
         return this.optionService.getOptionsBySize(sizeId);
     }
 
@@ -38,7 +40,7 @@ export class OptionController {
 
     @Put('update/:id')
     @Roles('admin')
-    async update(@Param('id') id: string, @Body() createOptionDto: CreateOptionDto, @CurrentUser() user: CurrentUserDto) {
-        return this.optionService.update(id, createOptionDto, user);
+    async update(@Param('id') id: string, @Body() updateOptionDto: UpdateOptionDto, @CurrentUser() user: CurrentUserDto) {
+        return this.optionService.update(id, updateOptionDto, user);
     }
 }

@@ -6,6 +6,9 @@ import { CreateOptionDto } from './dto/createOption.dto';
 import { Size } from '../size/entity/size.entity';
 import { Product } from '../product/entity/product.entity';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { UpdateOptionDto } from './dto/updateOption.dto';
+import { OptionDto } from './dto/option.dto';
+import { ProductDto } from '../product/dto/product.dto';
 
 @Injectable()
 export class OptionService {
@@ -38,31 +41,54 @@ export class OptionService {
             description,
             imageUrl,
             size,
+            availableUnits: 0
         });
 
         return await this.optionRepository.save(newOption);
 
         } catch (error) {
-        if (error instanceof ConflictException || error instanceof NotFoundException) {
-            throw error;
-        } else {
-            throw new InternalServerErrorException('An unexpected error occurred while creating the option');
-        }
+            if (error instanceof ConflictException || error instanceof NotFoundException) {
+                throw error;
+            } else {
+                console.log(error);
+                throw new InternalServerErrorException('An unexpected error occurred while creating the option');
+            }
         }
     }
 
-    async getAll(): Promise<Option[]> {
+    async getAll(): Promise<OptionDto[]> {
         try {
-        return await this.optionRepository.find({ relations: ['size'] });
+            const options = await this.optionRepository.find({ relations: ['size'] });
+            return options.map((option): OptionDto => {
+                return {
+                    id: option.id,
+                    description: option.description,
+                    imageUrl: option.imageUrl,
+                    availableUnits: option.availableUnits,
+                    sizeId: option.size.id
+                }
+            });
         } catch {
-        throw new InternalServerErrorException('An unexpected error occurred while retrieving options');
+            throw new InternalServerErrorException('An unexpected error occurred while retrieving options');
         }
     }
 
 
-    async getOptionsBySize(sizeId: string): Promise<Option[]> {
+    async getOptionsBySize(sizeId: string): Promise<OptionDto[]> {
         try {
-            return await this.optionRepository.find({where: { size: { id: sizeId }}});
+            const options = await this.optionRepository.find({
+                where: { size: { id: sizeId } },
+                relations: ['size']
+            });
+            return options.map((option): OptionDto => {
+                return {
+                    id: option.id,
+                    description: option.description,
+                    imageUrl: option.imageUrl,
+                    availableUnits: option.availableUnits,
+                    sizeId: option.size.id
+                }
+            });
         } catch {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving options');
         }
@@ -89,7 +115,7 @@ export class OptionService {
       }
 
 
-    async update(id: string, createOptionDto: CreateOptionDto, user: CurrentUserDto): Promise<void> {
+    async update(id: string, updateOptionDto: UpdateOptionDto, user: CurrentUserDto): Promise<void> {
         const option = await this.optionRepository.findOne({
             where: {id},
             relations: ['size', 'size.product']
@@ -106,8 +132,14 @@ export class OptionService {
             throw new ConflictException('You are not authorized to update this option');
         }
 
-        option.description = createOptionDto.description;
-        option.imageUrl = createOptionDto.imageUrl;
+        option.description = updateOptionDto.description;
+        option.imageUrl = updateOptionDto.imageUrl;
+
+        if(updateOptionDto.availableUnits>=0) {
+            option.availableUnits = updateOptionDto.availableUnits;
+        } else {
+            throw new ConflictException('Available units must be greater than or equal to 0');
+        }
 
         await this.optionRepository.save(option);
     }

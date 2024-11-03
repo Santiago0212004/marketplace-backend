@@ -5,6 +5,7 @@ import { Size } from './entity/size.entity';
 import { CreateSizeDto } from './dto/createSize.dto';
 import { Product } from '../product/entity/product.entity';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { SizeDto } from './dto/size.dto';
 
 
 
@@ -48,18 +49,32 @@ export class SizeService {
         }
     }
 
-    async getAll(): Promise<Size[]> {
+    async getAll(): Promise<SizeDto[]> {
         try {
-        return await this.sizeRepository.find({ relations: ['product'] });
+            const sizes = await this.sizeRepository.find({ relations: ['product'] });
+            return sizes.map(size => ({
+                id: size.id,
+                name: size.name,
+                productId: size.product.id,
+            }));
         } catch {
-        throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
+            throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
         }
     }
 
-    async getSizesByProductId(productId: string): Promise<Size[]> {
+    async getSizesByProductId(productId: string): Promise<SizeDto[]> {
         try {
-            return await this.sizeRepository.find({where: { product: { id: productId }}});
-        } catch {
+            const sizes = await this.sizeRepository.find({
+                where: { product: { id: productId } },
+                relations: ['product'],
+            });
+            console.log(sizes);
+            return sizes.map(size => ({
+                id: size.id,
+                name: size.name,
+                productId: size.product.id,
+            }));
+        } catch (error) {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
         }
     }

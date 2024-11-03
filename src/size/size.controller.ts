@@ -7,6 +7,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { CurrentUser } from '../user/decorators/currentUser.decorator';
 import { CurrentUserDto } from '../common/currentUser.dto';
+import { SizeDto } from './dto/size.dto';
 
 @Controller('sizes')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -19,14 +20,14 @@ export class SizeController {
     }
 
     @Roles('admin', 'seller', 'buyer')
-    @Get()
-    async getAll(): Promise<Size[]> {
+    @Get('all')
+    async getAll(): Promise<SizeDto[]> {
         return this.sizeService.getAll();
     }
 
     @Roles('admin', 'seller', 'buyer')
     @Get('product/:id')
-    async getSizesByProductId(@Param('id') productId: string): Promise<Size[]> {
+    async getSizesByProductId(@Param('id') productId: string): Promise <SizeDto[]> {
         return this.sizeService.getSizesByProductId(productId);
     }
 
