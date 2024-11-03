@@ -5,7 +5,6 @@ import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from '../user/entity/user.entity';
 import { Order } from './entity/order.entity';
 import { Option } from '../option/entity/option.entity';
-import { Unit } from '../unit/entity/unit.entity';
 import { UserService } from '../user/user.service';
 
 
@@ -20,9 +19,6 @@ export class OrderService {
     @InjectRepository(Option)
     private readonly optionRepository: Repository<Option>,
 
-    @InjectRepository(Unit)
-    private readonly unitRepository: Repository<Unit>,
-    
     private readonly userService: UserService
   ) {}
 
@@ -45,22 +41,17 @@ export class OrderService {
               throw new NotFoundException(`Seller with ID ${buyerId} not found`);
           }
 
-          const availableUnit = await this.unitRepository.findOne({
-            where: { option: { id: optionId }, sold: false }
-          });
-
-          if (!availableUnit) {
+          if (option.availableUnits <= 0 ) {
             throw new ConflictException('No available units for this option');
-          }else {
-            availableUnit.sold = true;
-            await this.unitRepository.save(availableUnit);
           }
 
           const newOrder = this.orderRepository.create({
-          createdDate,
-          buyer,
-          option
+              createdDate,
+              buyer,
+              option
           });
+
+          await this.optionRepository.update(optionId, { availableUnits: option.availableUnits - 1 });
 
           return await this.orderRepository.save(newOrder);
     } catch (error) {

@@ -15,6 +15,8 @@ import { User } from '../user/entity/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { ReviewService } from 'src/review/review.service';
 import { ProductDto } from './dto/product.dto';
+import { CurrentUserDto } from '../common/currentUser.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 @Injectable()
 export class ProductService {
   constructor(
@@ -28,10 +30,13 @@ export class ProductService {
     private readonly reviewService: ReviewService
   ) {}
 
-  async create(createProductDto: CreateProductDto, user): Promise<Product> {
+  async create(
+    createProductDto: CreateProductDto,
+    user: CurrentUserDto
+  ): Promise<Product> {
     const { name, description, price, mainImageUrl, subcategoryId } =
       createProductDto;
-      const sellerId: string = user.userId;
+    const sellerId: string = user.userId;
     try {
       const existingProduct = await this.productRepository.findOne({
         where: { name },
@@ -82,18 +87,40 @@ export class ProductService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string, user: CurrentUserDto) {
     const product = await this.productRepository.findOne({
       where: { id },
+      relations: ['seller'],
     });
+
+    if (product.seller.id !== user.userId && user.role.name !== 'admin') {
+      throw new ConflictException(
+        'You are not authorized to delete this product',
+      );
+    }
 
     if (!product) {
       throw new NotFoundException(`No product found with this id:${id}`);
     }
 
-    this.productRepository.remove(product);
+    await this.productRepository.remove(product);
   }
-  async update(updateProduct: CreateProductDto, id: string): Promise<Product> {
+  async update(
+    updateProduct: UpdateProductDto,
+    id: string,
+    user: CurrentUserDto,
+  ): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['seller'],
+    });
+
+    if (product.seller.id !== user.userId && user.role.name !== 'admin') {
+      throw new ConflictException(
+        'You are not authorized to update this product',
+      );
+    }
+
     const newProduct = await this.productRepository.preload({
       id: id,
       ...updateProduct,
@@ -149,10 +176,32 @@ export class ProductService {
           category: product.subcategory.category.name,
         };
       });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+  async getUserProducts(user: CurrentUserDto): Promise<ProductDto[]> {
+    try {
+      const products = await this.productRepository.find({
+        where: { seller: { id: user.userId } },
+        relations: ['subcategory', 'subcategory.category', 'seller'],
+      });
 
-    } catch(error) {
-      console.log(error)
-      throw new InternalServerErrorException('An unexpected error occurred while retrieving products');
+      return products.map((product): ProductDto => {
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          mainImageUrl: product.mainImageUrl,
+          subcategory: product.subcategory.name,
+          category: product.subcategory.category.name,
+        };
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 

@@ -6,6 +6,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CurrentUser } from '../user/decorators/currentUser.decorator';
+import { CurrentUserDto } from '../common/currentUser.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 @Controller('product')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -14,25 +16,31 @@ export class ProductController {
 
     @Post('create')
     @Roles('seller', 'admin')
-    async create(@Body() createProductDto: CreateProductDto, @CurrentUser() user) {
+    async create(@Body() createProductDto: CreateProductDto, @CurrentUser() user: CurrentUserDto) {
         return this.productService.create(createProductDto, user);
     }
 
     @Patch('update/:id')
     @Roles('seller', 'admin')
-    async update(@Body() updateProduct: CreateProductDto, @Param('id', ParseUUIDPipe) id:string){
-        return this.productService.update(updateProduct, id)
+    async update(@Body() updateProduct: UpdateProductDto, @Param('id', ParseUUIDPipe) id:string, @CurrentUser() user: CurrentUserDto){
+        return this.productService.update(updateProduct, id, user);
     }
 
     @Delete('delete/:id')
     @Roles('seller', 'admin')
-    async remove(@Param('id', ParseUUIDPipe) id:string){
-        return this.productService.remove(id)
+    async remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: CurrentUserDto){
+        return this.productService.remove(id, user);
+    }
+
+    @Get('get/:id')
+    @Roles('buyer', 'seller', 'admin')
+    async get(@Param('id', ParseUUIDPipe) id: string){
+        return this.productService.findOne(id);
     }
 
     @Get('all')
     @Roles('seller', 'admin')
-    async findAll(@Query()paginationDto: PaginationDto){
+    async findFilterProducts(@Query()paginationDto: PaginationDto){
         return this.productService.getAll(paginationDto)
     }
 
@@ -40,5 +48,12 @@ export class ProductController {
     @Roles('seller', 'admin')
     async findOne(@Param('id', ParseUUIDPipe) id:string){
         return this.productService.findOne(id)
+    }
+
+    @Get('seller_products')
+    @Roles('seller', 'admin')
+    async findUserProducts(@CurrentUser() user: CurrentUserDto){
+        console.log(user);
+        return this.productService.getUserProducts(user);
     }
 }
