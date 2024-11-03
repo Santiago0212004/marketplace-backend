@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Size } from './entity/size.entity';
 import { CreateSizeDto } from './dto/createSize.dto';
 import { Product } from '../product/entity/product.entity';
+import { CurrentUserDto } from '../common/currentUser.dto';
 
 
 
@@ -63,11 +64,19 @@ export class SizeService {
         }
     }
 
-    async delete(id: string): Promise<void> {
-        const size = await this.sizeRepository.findOne({where: {id}});
+    async delete(id: string, user: CurrentUserDto): Promise<void> {
+        const size = await this.sizeRepository.findOne({
+            where: {id},
+            relations: ['product', 'product.seller']
+          });
         if (!size) {
-          throw new NotFoundException(`Size with id ${id} not found`);
+            throw new NotFoundException(`Size with id ${id} not found`);
         }
+
+        if(user.userId !== size.product.seller.id && user.role.name !== 'admin') {
+            throw new ConflictException('You are not authorized to delete this size');
+        }
+
         await this.sizeRepository.delete(size.id);
     }
 }

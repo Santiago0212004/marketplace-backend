@@ -5,6 +5,8 @@ import { Size } from './entity/size.entity';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { CurrentUser } from '../user/decorators/currentUser.decorator';
+import { CurrentUserDto } from '../common/currentUser.dto';
 
 @Controller('sizes')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,7 +32,7 @@ export class SizeController {
 
     @Delete(':id')
     @Roles('admin')
-    async delete(@Param('id') id: string) {
-        return this.sizeService.delete(id);
+    async delete(@Param('id') id: string, @CurrentUser() user: CurrentUserDto) {
+        return this.sizeService.delete(id, user);
     }
 }
