@@ -35,4 +35,10 @@ export class ProductController {
     async findAll(@Query()paginationDto: PaginationDto){
         return this.productService.getAll(paginationDto)
     }
+
+    @Get('one/:id')
+    @Roles('seller', 'admin')
+    async findOne(@Param('id', ParseUUIDPipe) id:string){
+        return this.productService.findOne(id)
+    }
 }
