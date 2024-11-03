@@ -6,14 +6,11 @@ import { OrderController } from './order.controller';
 import { Order } from './entity/order.entity';
 import { OptionModule } from 'src/option/option.module';
 import { Option } from 'src/option/entity/option.entity';
-import { CurrentUserService } from 'src/common/currentUser.service';
-import { UnitModule } from 'src/unit/unit.module';
-import { Unit } from 'src/unit/entity/unit.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, Option, Unit]), UserModule, OptionModule, UnitModule],
+    imports: [TypeOrmModule.forFeature([Order, Option]), UserModule, OptionModule],
     exports: [TypeOrmModule],
-    providers: [OrderService, CurrentUserService],
+    providers: [OrderService],
     controllers: [OrderController],
 })
 export class OrderModule {}

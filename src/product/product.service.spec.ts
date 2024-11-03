@@ -6,7 +6,8 @@ import { Subcategory } from '../subcategory/entity/subcategory.entity';
 import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { CurrentUserService } from '../common/currentUser.service';
+import { CurrentUser } from '../user/decorators/currentUser.decorator';
+import { CurrentUserDto } from '../common/currentUser.dto';
 
 interface MockProduct extends Omit<Product, 'seller' | 'subcategory' | 'reviews' | 'sizes'> {
   seller: MockUser;
@@ -46,10 +47,6 @@ describe('ProductService', () => {
     find: jest.fn()
   });
 
-  const mockCurrentUserService = {
-    getCurrentUserId: jest.fn()
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -66,10 +63,6 @@ describe('ProductService', () => {
           provide: getRepositoryToken(User),
           useFactory: mockRepositoryFactory
         },
-        {
-          provide: CurrentUserService,
-          useValue: mockCurrentUserService
-        }
       ],
     }).compile();
 
@@ -128,9 +121,12 @@ describe('ProductService', () => {
       sizes: []
     };
 
-    beforeEach(() => {
-      mockCurrentUserService.getCurrentUserId.mockReturnValue(mockSellerId);
-    });
+    const currentUser: CurrentUserDto = {
+      userId: mockSellerId,
+      email: mockSeller.email,
+      role: mockSeller.role
+    }
+
 
     it('should create a product successfully', async () => {
       jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(mockSubcategory as unknown as Subcategory);
@@ -139,7 +135,9 @@ describe('ProductService', () => {
       jest.spyOn(productRepository, 'create').mockReturnValue(mockProduct as unknown as Product);
       jest.spyOn(productRepository, 'save').mockResolvedValue(mockProduct as unknown as Product);
 
-      const result = await service.create(createProductDto);
+
+
+      const result = await service.create(createProductDto, currentUser);
 
       expect(result).toEqual(mockProduct);
       expect(productRepository.save).toHaveBeenCalledWith(mockProduct);
@@ -148,16 +146,16 @@ describe('ProductService', () => {
     it('should throw ConflictException when product name already exists', async () => {
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as unknown as Product);
 
-      await expect(service.create(createProductDto)).rejects.toThrow(ConflictException);
-      await expect(service.create(createProductDto)).rejects.toThrow('Product with the same name already exists');
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(ConflictException);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow('Product with the same name already exists');
     });
 
     it('should throw NotFoundException when subcategory not found', async () => {
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.create(createProductDto)).rejects.toThrow(NotFoundException);
-      await expect(service.create(createProductDto)).rejects.toThrow(`Subcategory with ID ${createProductDto.subcategoryId} not found`);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(`Subcategory with ID ${createProductDto.subcategoryId} not found`);
     });
 
     it('should throw NotFoundException when seller not found', async () => {
@@ -165,15 +163,15 @@ describe('ProductService', () => {
       jest.spyOn(subcategoryRepository, 'findOne').mockResolvedValue(mockSubcategory as unknown as Subcategory);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(service.create(createProductDto)).rejects.toThrow(NotFoundException);
-      await expect(service.create(createProductDto)).rejects.toThrow(`Seller with ID ${mockSellerId} not found`);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(`Seller with ID ${mockSellerId} not found`);
     });
 
     it('should throw InternalServerErrorException on unexpected error', async () => {
       jest.spyOn(productRepository, 'findOne').mockRejectedValue(new Error('Database error'));
 
-      await expect(service.create(createProductDto)).rejects.toThrow(InternalServerErrorException);
-      await expect(service.create(createProductDto)).rejects.toThrow('An unexpected error occurred while creating the product');
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.create(createProductDto, currentUser)).rejects.toThrow('An unexpected error occurred while creating the product');
     });
   });
 
