@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Size } from './entity/size.entity';
 import { CreateSizeDto } from './dto/createSize.dto';
 import { Product } from '../product/entity/product.entity';
+import { CurrentUserDto } from '../common/currentUser.dto';
+import { SizeDto } from './dto/size.dto';
 
 
 
@@ -47,27 +49,49 @@ export class SizeService {
         }
     }
 
-    async getAll(): Promise<Size[]> {
+    async getAll(): Promise<SizeDto[]> {
         try {
-        return await this.sizeRepository.find({ relations: ['product'] });
-        } catch {
-        throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
-        }
-    }
-
-    async getSizesByProductId(productId: string): Promise<Size[]> {
-        try {
-            return await this.sizeRepository.find({where: { product: { id: productId }}});
+            const sizes = await this.sizeRepository.find({ relations: ['product'] });
+            return sizes.map(size => ({
+                id: size.id,
+                name: size.name,
+                productId: size.product.id,
+            }));
         } catch {
             throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
         }
     }
 
-    async delete(id: string): Promise<void> {
-        const size = await this.sizeRepository.findOne({where: {id}});
-        if (!size) {
-          throw new NotFoundException(`Size with id ${id} not found`);
+    async getSizesByProductId(productId: string): Promise<SizeDto[]> {
+        try {
+            const sizes = await this.sizeRepository.find({
+                where: { product: { id: productId } },
+                relations: ['product'],
+            });
+            console.log(sizes);
+            return sizes.map(size => ({
+                id: size.id,
+                name: size.name,
+                productId: size.product.id,
+            }));
+        } catch (error) {
+            throw new InternalServerErrorException('An unexpected error occurred while retrieving sizes');
         }
+    }
+
+    async delete(id: string, user: CurrentUserDto): Promise<void> {
+        const size = await this.sizeRepository.findOne({
+            where: {id},
+            relations: ['product', 'product.seller']
+          });
+        if (!size) {
+            throw new NotFoundException(`Size with id ${id} not found`);
+        }
+
+        if(user.userId !== size.product.seller.id && user.role.name !== 'admin') {
+            throw new ConflictException('You are not authorized to delete this size');
+        }
+
         await this.sizeRepository.delete(size.id);
     }
 }
