@@ -10,10 +10,10 @@ export class Order {
   @Column()
   createdDate: Date;
 
-  @ManyToOne(() => User, (user) => user.orders)
+  @ManyToOne(() => User, (user) => user.orders, { onDelete: 'CASCADE' })
   buyer: User;
 
-  @ManyToOne(() => Option, (option) => option.orders)
+  @ManyToOne(() => Option, (option) => option.orders, { onDelete: 'CASCADE' })
   option: Option;
 
   @Column()

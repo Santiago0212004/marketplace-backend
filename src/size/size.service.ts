@@ -23,11 +23,6 @@ export class SizeService {
         const { name, productId } = CreateSizeDto;
 
         try {
-        const existingSize = await this.sizeRepository.findOne({ where: { name } });
-        if (existingSize) {
-            throw new ConflictException('Size with the same name already exists');
-        }
-
         const product = await this.productRepository.findOne({ where: { id: productId } });
         if (!product) {
             throw new NotFoundException(`Product with ID ${productId} not found`);

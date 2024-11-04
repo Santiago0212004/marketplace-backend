@@ -33,15 +33,6 @@ export class ProductService {
       createProductDto;
     const sellerId: string = user.userId;
     try {
-      const existingProduct = await this.productRepository.findOne({
-        where: { name },
-      });
-      if (existingProduct) {
-        throw new ConflictException(
-          'Product with the same name already exists',
-        );
-      }
-
       const subcategory = await this.subcategoryRepository.findOne({
         where: { id: subcategoryId },
       });

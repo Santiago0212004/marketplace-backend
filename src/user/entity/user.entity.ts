@@ -3,6 +3,7 @@ import { Product } from '../../product/entity/product.entity';
 import { Order } from '../../order/entity/order.entity';
 import { ReviewSeller } from '../../review/entity/reviewSeller.entity';
 import { Role } from '../../role/entity/role.entity';
+import { Subcategory } from '../../subcategory/entity/subcategory.entity';
 
 @Entity('users')
 export class User {
@@ -21,7 +22,7 @@ export class User {
   @Column()
   address: string;
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @ManyToOne(() => Role, (role) => role.users, { onDelete: 'CASCADE' })
   role: Role;
 
   @OneToMany(() => Product, (product) => product.seller, { cascade: true })
@@ -32,4 +33,7 @@ export class User {
 
   @OneToMany(() => ReviewSeller, (reviewSeller) => reviewSeller.buyer, { cascade: true })
   reviews: ReviewSeller[];
+
+  @OneToMany(() => Subcategory, (subcategory) => subcategory.seller, { cascade: true })
+  subcategories: Subcategory[];
 }
