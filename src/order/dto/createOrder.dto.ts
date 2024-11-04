@@ -1,6 +1,9 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class CreateOrderDto {
     @IsString()
     optionId: string;
+
+    @IsNumber()
+    amount: number;
 }

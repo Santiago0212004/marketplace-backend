@@ -12,6 +12,6 @@ export class ReviewSeller {
   @Column()
   comment: string;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
   buyer: User;
 }

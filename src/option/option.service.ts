@@ -27,11 +27,6 @@ export class OptionService {
         const { description, imageUrl, sizeId } = CreateOptionDto;
 
         try {
-        const existingOption = await this.optionRepository.findOne({ where: { description } });
-        if (existingOption) {
-            throw new ConflictException('Option with the same description already exists');
-        }
-
         const size = await this.sizeRepository.findOne({ where: { id: sizeId } });
         if (!size) {
             throw new NotFoundException(`Size with ID ${size} not found`);
