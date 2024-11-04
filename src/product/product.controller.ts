@@ -40,16 +40,16 @@ export class ProductController {
 
     @Get('all')
     @Roles('seller', 'admin')
-    async findFilterProducts(@Query()paginationDto: PaginationDto){
+    async findAll(@Query()paginationDto: PaginationDto){
         return this.productService.getAll(paginationDto)
     }
 
     @Get('one/:id')
     @Roles('seller', 'admin')
     async findOne(@Param('id', ParseUUIDPipe) id:string){
-        return this.productService.findOne(id)
+        return this.productService.findOneProduct(id)
     }
-
+    
     @Get('seller_products')
     @Roles('seller', 'admin')
     async findUserProducts(@CurrentUser() user: CurrentUserDto){

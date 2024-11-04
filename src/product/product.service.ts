@@ -15,10 +15,12 @@ import { User } from '../user/entity/user.entity';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { ReviewService } from 'src/review/review.service';
 import { ProductDto } from './dto/product.dto';
+import { GetProductDto } from './dto/getProduct.dto';
 import { CurrentUserDto } from '../common/currentUser.dto';
 import { UpdateProductDto } from './dto/updateProduct.dto';
 @Injectable()
 export class ProductService {
+ 
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
@@ -207,6 +209,20 @@ export class ProductService {
 
   findOne(id: string) {
     return this.productRepository.findOne({ where: { id } });
+  }
+
+  async findOneProduct(id: string): Promise<GetProductDto> {
+    const product = await this.productRepository.findOne({ where: { id } });
+
+    const getProductDto: GetProductDto = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      mainImageUrl: product.mainImageUrl
+    }
+
+    return getProductDto
   }
 
   setRating(product: Product, rating: number) {
