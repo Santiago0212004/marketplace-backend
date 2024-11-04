@@ -15,4 +15,10 @@ export class Order {
 
   @ManyToOne(() => Option, (option) => option.orders)
   option: Option;
+
+  @Column()
+  amount: number;
+
+  @Column()
+  totalPrice: number;
 }

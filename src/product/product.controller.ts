@@ -38,7 +38,7 @@ export class ProductController {
     }
 
     @Get('all')
-    @Roles('seller', 'admin')
+    @Roles('buyer', 'seller', 'admin')
     async findAll(){
         return this.productService.getAll();
     }
