@@ -31,7 +31,7 @@
     "@nestjs/platform-express": "^10.4.4",
     "@nestjs/swagger": "^7.4.2",
     "@nestjs/typeorm": "^10.0.2",
-    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/supabase-js": "^2.46.1",
     "@vercel/node": "^3.2.19",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
