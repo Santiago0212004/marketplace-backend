@@ -5,6 +5,7 @@ import { User } from './entity/user.entity';
 import { RegisterUserDto } from '../auth/dto/auth.dto';
 import { Role } from '../role/entity/role.entity';
 import * as bcrypt from 'bcrypt';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,7 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async updateUser(id: string, updateData: Partial<User>): Promise<Partial<User>> {
+  async updateUser(id: string, updateData: Partial<User>): Promise<UserDto> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -70,12 +71,17 @@ export class UserService {
   
     await this.userRepository.update(user.id, updateData);
   
-    const { password, ...userWithoutPassword } = await this.userRepository.findOne({ 
-      where: { id: user.id }
-    });
+    const updatedUser = await this.userRepository.findOne({ where: { id: user.id } });
   
-    return userWithoutPassword;
+    const userDto = new UserDto();
+    userDto.id = updatedUser.id;
+    userDto.fullName = updatedUser.fullName;
+    userDto.email = updatedUser.email;
+    userDto.address = updatedUser.address;
+  
+    return userDto;
   }
+  
   
 
 
