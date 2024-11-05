@@ -10,7 +10,7 @@ export class Size {
   @Column()
   name: string;
 
-  @ManyToOne(() => Product, (product) => product.sizes)
+  @ManyToOne(() => Product, (product) => product.sizes, { onDelete: 'CASCADE' })
   product: Product;
 
   @OneToMany(() => Option, (option) => option.size, { cascade: true })

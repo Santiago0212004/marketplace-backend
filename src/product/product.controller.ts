@@ -39,9 +39,15 @@ export class ProductController {
     }
 
     @Get('all')
-    @Roles('seller', 'admin')
-    async findAll(@Query()paginationDto: PaginationDto){
-        return this.productService.getAll(paginationDto)
+    @Roles('buyer','seller', 'admin')
+    async findAllFilter(@Query()paginationDto: PaginationDto){
+        return this.productService.getAllFilter(paginationDto)
+    }
+
+    @Get('all')
+    @Roles('buyer', 'seller', 'admin')
+    async findAll(){
+        return this.productService.getAll();
     }
 
     @Get('one/:id')

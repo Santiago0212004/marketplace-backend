@@ -13,7 +13,7 @@ export class Option {
   @Column()
   imageUrl: string;
 
-  @ManyToOne(() => Size, (size) => size.options)
+  @ManyToOne(() => Size, (size) => size.options, { onDelete: 'CASCADE' })
   size: Size;
 
   @OneToMany(() => Order, (order) => order.option)

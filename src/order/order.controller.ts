@@ -5,6 +5,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { Get, Param } from '@nestjs/common';
+import { CurrentUser } from '../user/decorators/currentUser.decorator';
+import { CurrentUserDto } from '../common/currentUser.dto';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -13,8 +15,8 @@ export class OrderController {
 
     @Post('create')
     @Roles('buyer', 'admin')
-    async create(@Body() createProductDto: CreateOrderDto, @Request() req) {
-        return this.orderService.create(createProductDto,req);
+    async create(@Body() createProductDto: CreateOrderDto, @CurrentUser() user: CurrentUserDto) {
+        return this.orderService.create(createProductDto, user);
     }
 
     @Delete(':id')
@@ -29,15 +31,15 @@ export class OrderController {
         return this.orderService.getAll();
     }
 
-    @Get('seller/:sellerId')
+    @Get('seller_orders')
     @Roles('seller', 'admin')
-    async getOrdersBySeller(@Param('sellerId') sellerId: string) {
-        return this.orderService.getOrdersBySeller(sellerId);
+    async getOrdersBySeller(@CurrentUser() user: CurrentUserDto) {
+        return this.orderService.getOrdersBySeller(user);
     }
 
-    @Get('buyer/:buyerId')
+    @Get('buyer_orders')
     @Roles('buyer', 'admin')
-    async getOrdersByBuyer(@Param('buyerId') buyerId: string) {
-        return this.orderService.getOrdersByBuyer(buyerId);
+    async getOrdersByBuyer(@CurrentUser() user: CurrentUserDto) {
+        return this.orderService.getOrdersByBuyer(user);
     }
 }

@@ -40,7 +40,7 @@ import { UploadModule } from './upload/upload.module';
     SubcategoryModule,
     CategoryModule,
     ReviewModule,
-    UploadModule
+    UploadModule,
   ],
   controllers: [ReviewController],
   providers: [],

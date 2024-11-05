@@ -5,6 +5,8 @@ import { Subcategory } from './entity/subcategory.entity';
 import { CreateSubcategoryDto } from './dto/createSubcategory.dto';
 import { Category } from '../category/entity/category.entity';
 import { SubcategoryDto } from './dto/subcategory.dto';
+import { CurrentUserDto } from '../common/currentUser.dto';
+import { User } from '../user/entity/user.entity';
 
 @Injectable()
 export class SubcategoryService {
@@ -14,25 +16,28 @@ export class SubcategoryService {
 
       @InjectRepository(Category)
       private readonly categoryRepository: Repository<Category>,
+
+      @InjectRepository(User)
+      private readonly userRepository: Repository<User>,
     ) {}
 
-    async create(createSubcategoryDto: CreateSubcategoryDto): Promise<Subcategory> {
+    async create(createSubcategoryDto: CreateSubcategoryDto, user: CurrentUserDto): Promise<Subcategory> {
         const { name, categoryId } = createSubcategoryDto;
-
         try {
-            const existingSubcategory = await this.subcategoryRepository.findOne({ where: { name } });
-            if (existingSubcategory) {
-                throw new ConflictException('Subcategory with the same name already exists');
-            }
-
             const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
             if (!category) {
                 throw new NotFoundException(`Category with ID ${categoryId} not found`);
             }
 
+            const seller = await this.userRepository.findOne({ where: { id: user.userId } });
+            if (!seller) {
+                throw new NotFoundException(`User not found`);
+            }
+
             const newSubcategory = this.subcategoryRepository.create({
                 name,
                 category,
+                seller
             });
 
             return await this.subcategoryRepository.save(newSubcategory);
@@ -72,6 +77,27 @@ export class SubcategoryService {
                    name: subcategory.name,
                    category: subcategory.category.name
                }
+            });
+
+        } catch(error) {
+            console.log(error);
+            throw new InternalServerErrorException('An unexpected error occurred while retrieving subcategories');
+        }
+    }
+
+    async getMineByCategory(categoryId: string, user: CurrentUserDto): Promise<SubcategoryDto[]> {
+        try {
+            const subcategories = await this.subcategoryRepository.find({
+                where: { category: { id: categoryId }, seller: { id: user.userId } },
+                relations: ['category']
+              });
+
+            return subcategories.map((subcategory): SubcategoryDto => {
+                return {
+                    id: subcategory.id,
+                    name: subcategory.name,
+                    category: subcategory.category.name
+                }
             });
 
         } catch(error) {

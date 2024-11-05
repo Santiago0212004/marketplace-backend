@@ -40,15 +40,6 @@ export class ProductService {
       createProductDto;
     const sellerId: string = user.userId;
     try {
-      const existingProduct = await this.productRepository.findOne({
-        where: { name },
-      });
-      if (existingProduct) {
-        throw new ConflictException(
-          'Product with the same name already exists',
-        );
-      }
-
       const subcategory = await this.subcategoryRepository.findOne({
         where: { id: subcategoryId },
       });
@@ -134,7 +125,31 @@ export class ProductService {
     await this.productRepository.save(newProduct);
     return newProduct;
   }
-  async getAll(paginationDto: PaginationDto): Promise<ProductDto[]> {
+
+  async getAll(): Promise<ProductDto[]> {
+    try {
+      const products = await this.productRepository.find({
+        relations: ['subcategory', 'subcategory.category'],
+      });
+
+      return products.map((product): ProductDto => {
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          mainImageUrl: product.mainImageUrl,
+          subcategory: product.subcategory.name,
+          category: product.subcategory.category.name,
+        };
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async getAllFilter(paginationDto: PaginationDto): Promise<ProductDto[]> {
     try {
 
       const {category, priceMin, priceMax, qualification } = paginationDto
