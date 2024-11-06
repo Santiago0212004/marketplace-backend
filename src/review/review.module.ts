@@ -9,7 +9,7 @@ import { UserModule } from 'src/user/user.module'
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review]), TypeOrmModule.forFeature([ReviewSeller]),forwardRef(() => ProductModule),forwardRef(() => UserModule)],
+  imports: [TypeOrmModule.forFeature([Review, ReviewSeller]),forwardRef(() => ProductModule),forwardRef(() => UserModule)],
   providers: [ReviewService],
   controllers: [ReviewController],
   exports:[ReviewService]
