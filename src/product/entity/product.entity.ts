@@ -32,4 +32,8 @@ export class Product {
 
   @ManyToOne(() => Subcategory, (subcategory) => subcategory.products, { onDelete: 'CASCADE' })
   subcategory: Subcategory;
+
+  @Column('decimal', { nullable: true, default: 0 })
+  rating?: number;
+
 }

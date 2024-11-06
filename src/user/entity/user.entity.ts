@@ -33,6 +33,9 @@ export class User {
 
   @OneToMany(() => ReviewSeller, (reviewSeller) => reviewSeller.buyer, { cascade: true })
   reviews: ReviewSeller[];
+  
+  @Column('int', { nullable: true, default: 0 })
+  rating?:number
 
   @OneToMany(() => Subcategory, (subcategory) => subcategory.seller, { cascade: true })
   subcategories: Subcategory[];
