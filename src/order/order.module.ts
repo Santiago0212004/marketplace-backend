@@ -4,16 +4,17 @@ import { OrderService } from './order.service';
 import { UserModule } from '../user/user.module';
 import { OrderController } from './order.controller';
 import { Order } from './entity/order.entity';
-import { OptionModule } from 'src/option/option.module';
-import { Option } from 'src/option/entity/option.entity';
-import { CurrentUserService } from 'src/common/currentUser.service';
-import { UnitModule } from 'src/unit/unit.module';
-import { Unit } from 'src/unit/entity/unit.entity';
+import { OptionModule } from '../option/option.module';
+import { Option } from '../option/entity/option.entity';
+import { Size } from '../size/entity/size.entity';
+import { Product } from '../product/entity/product.entity';
+import { SizeModule } from '../size/size.module';
+import { ProductModule } from '../product/product.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Order, Option, Unit]), UserModule, OptionModule, UnitModule],
+    imports: [TypeOrmModule.forFeature([Order, Option, Size, Product]), UserModule, OptionModule, SizeModule, ProductModule],
     exports: [TypeOrmModule],
-    providers: [OrderService, CurrentUserService],
+    providers: [OrderService],
     controllers: [OrderController],
 })
 export class OrderModule {}

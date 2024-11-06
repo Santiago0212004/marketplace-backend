@@ -11,7 +11,6 @@ import { ReviewController } from './review/review.controller';
 import { ReviewModule } from './review/review.module';
 import { SizeModule } from './size/size.module';
 import { OptionModule } from './option/option.module';
-import { UnitModule } from './unit/unit.module';
 import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
 
@@ -34,7 +33,6 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     UserModule,
     RoleModule,
-    UnitModule,
     OrderModule,
     OptionModule,
     SizeModule,
@@ -42,7 +40,7 @@ import { UploadModule } from './upload/upload.module';
     SubcategoryModule,
     CategoryModule,
     ReviewModule,
-    UploadModule
+    UploadModule,
   ],
   controllers: [ReviewController],
   providers: [],

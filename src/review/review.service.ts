@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, InternalServerErrorException, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductService } from '../product/product.service';
@@ -9,9 +9,11 @@ import { ReviewSeller } from './entity/reviewSeller.entity';
 
 @Injectable()
 export class ReviewService {
-
+    
     constructor(
+        @Inject(forwardRef(() => ProductService))
         private readonly productService: ProductService,
+        @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
@@ -50,6 +52,9 @@ export class ReviewService {
                 rating, comment, product
             })
 
+            this.productService.setRating(product, rating)
+
+
             return await this.reviewRepository.save(newReview)
         }
         const seller = await this.userService.findById(id)
@@ -61,6 +66,9 @@ export class ReviewService {
         const newSeller = this.reviewSellerRepository.create({
             rating, comment, buyer:seller
         })
+
+        this.userService.setRating(seller, rating)
+
 
         return await this.reviewSellerRepository.save(newSeller)//
     }

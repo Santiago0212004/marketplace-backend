@@ -21,7 +21,7 @@ export class Product {
   @Column()
   mainImageUrl: string;
 
-  @ManyToOne(() => User, (user) => user.products)
+  @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   seller: User;
 
   @OneToMany(() => Review, (review) => review.product, { cascade: true })
@@ -30,6 +30,10 @@ export class Product {
   @OneToMany(() => Size, (size) => size.product, { cascade: true })
   sizes: Size[];
 
-  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
+  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products, { onDelete: 'CASCADE' })
   subcategory: Subcategory;
+
+  @Column('decimal', { nullable: true, default: 0 })
+  rating?: number;
+
 }
