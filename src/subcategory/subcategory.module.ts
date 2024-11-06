@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Subcategory } from './entity/subcategory.entity';
 import { SubcategoryController } from './subcategory.controller';
@@ -8,7 +8,7 @@ import { User } from '../user/entity/user.entity';
 import { UserModule } from '../user/user.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Subcategory, User]), CategoryModule, UserModule],
+    imports: [TypeOrmModule.forFeature([Subcategory, User]), CategoryModule, forwardRef(() =>UserModule)],
     exports: [TypeOrmModule],
     controllers: [SubcategoryController],
     providers: [SubcategoryService],

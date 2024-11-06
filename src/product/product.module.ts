@@ -9,7 +9,7 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CategoryModule } from 'src/category/category.module';
 import { ReviewModule } from 'src/review/review.module';
 @Module({
-    imports: [TypeOrmModule.forFeature([Product]), SubcategoryModule,forwardRef(() => UserModule) , PaginationDto, CategoryModule,forwardRef(() => ReviewModule)],
+    imports: [TypeOrmModule.forFeature([Product]), forwardRef(() =>SubcategoryModule),forwardRef(() => UserModule) , PaginationDto, CategoryModule,forwardRef(() => ReviewModule)],
     providers: [ProductService],
     controllers: [ProductController],
     exports: [ProductService]
