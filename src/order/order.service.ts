@@ -136,7 +136,8 @@ export class OrderService {
         productPrice: order.option.size.product.price,
         sellerEmail: order.option.size.product.seller.email,
         sellerName: order.option.size.product.seller.fullName,
-        buyerEmail: order.buyer.email
+        buyerEmail: order.buyer.email,
+        productId: order.option.size.product.id
       };
     });
   }
