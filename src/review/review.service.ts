@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { CreateReviewDto } from './dto/createReview.dto';
 import { Review } from './entity/review.entity';
 import { ReviewSeller } from './entity/reviewSeller.entity';
+import { ReviewDto } from './dto/review.dto';
 
 @Injectable()
 export class ReviewService {
@@ -21,21 +22,33 @@ export class ReviewService {
         private readonly reviewSellerRepository: Repository<ReviewSeller>,
         
       ) {}
-    async getAll(id: string, typeReview: string): Promise<Review[] | ReviewSeller[]> {
+    async getAll(id: string, typeReview: string): Promise<ReviewDto[]| ReviewSeller[]> {
         try{
             if(typeReview === 'product'){
-                return await this.reviewRepository.find({ where:{
+                const reviews = await this.reviewRepository.find({ where:{
                      product:{ id }
                     }})
+                
+                return this.mapReviews(reviews);
             }
             return await this.reviewSellerRepository.find({ where:{
                 buyer:{ id }
                }})
+            
         }catch{
             throw new InternalServerErrorException('An unexpected error occurred while retrieving products');
         }
        
     }
+    mapReviews(reviews: Review[]): ReviewDto[] {
+        return reviews.map((review): ReviewDto => {
+            return{
+                rating:review.rating,
+                comment:review.comment
+            }
+        })
+    }
+
     async create(createReviewDto: CreateReviewDto, typeReview: string): Promise<Review | ReviewSeller> {
 
         const {rating, comment, id} = createReviewDto

@@ -17,4 +17,5 @@ export class OrderDto {
 
   productName: string;
   productPrice: number;
+  productId:string
 }
